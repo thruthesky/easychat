@@ -11,6 +11,10 @@ dependencies:
   flutter:
     sdk: flutter
 
+  cloud_firestore: ^4.8.1
+  firebase_core: ^2.11.0
+  firebase_ui_firestore: ^1.5.3
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
