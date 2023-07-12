@@ -45,6 +45,14 @@
 - You need to create only one screen to use the easychat.
 
 
+```dart
+Scafolld(
+  appBar: AppBar(
+    title:
+  )
+)
+```
+
 
 
 ## Additional information
