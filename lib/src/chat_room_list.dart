@@ -10,6 +10,8 @@ class ChatRoomList extends StatefulWidget {
 class _ChatRoomListState extends State<ChatRoomList> {
   @override
   Widget build(BuildContext context) {
-    return Container();
+    return Container(
+      child: const Text('Chat Room List'),
+    );
   }
 }
