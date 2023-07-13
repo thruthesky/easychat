@@ -137,6 +137,8 @@ Scafolld(
 
 
 
+
+
 ## Additional information
 
 - Please create issues.
@@ -165,4 +167,15 @@ Scafolld(
         ),
       );
     });
+```
+
+
+# Firebase
+
+## Security Rules
+
+- Run firestore emulator like below and test the security rules.
+
+```sh
+% firebase emulators:start --only firestore
 ```
