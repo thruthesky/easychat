@@ -2,6 +2,30 @@
 
 * This package helps the flutter developers to rapidly build chat app.
 
+
+## TODO
+
+- See the Principle.
+- Login is required to use this app. Meaning, this package does not provide login relational feature. the parent app must provide login and login is reuqired for using this package.
+- Create chat room.
+- 
+- Updating user's display name and photo url in chat room collection. Not indivisual chat message.
+
+
+
+## Overview
+
+### Principle of Design
+
+- Easychat provides logic as much as possible. This means, the app must provide UI and hook the user event with the easychat logic.
+  - In some case, easychat must provide ui like displaying the list of chat friend list or chat room and message list. But still easychaht provides a way to customise everything.
+
+- Easychat also provide sample UI. So, developer can see the code, copy and customise it.
+
+- Easychat throws exceptions when there are problems. It is the app's responsibility to catch and handle them.
+- For sample UI widgets, it provides `sucess` and `error` handler.
+
+
 ## Environment
 
 * Firestore
@@ -13,7 +37,6 @@
 * File upload api
 
 ## Setup
-
 
 ### Firestore Security Rules
 
@@ -33,11 +56,24 @@
 * Easychat package uses the same connection on your application. You can simply initialize firebase connection inside your application.
 
 
-## TODO
-
-- Updating user's display name and photo url in chat room collection. Not indivisual chat message.
 
 
+### Firestore Security Rules
+
+* It uses the following collections
+  * `/easy-chat-rooms` - chat room information.
+  * `/easy-chat-messages` - chat message documents.
+
+* Add the folling security rules.
+
+```json
+ ... security rules here ...
+```
+
+
+### Firebase settings
+
+* Easychat package uses the same connection on your application. You can simply initialize firebase connection inside your application.
 
 
 ## Usage
