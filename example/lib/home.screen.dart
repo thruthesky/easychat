@@ -1,7 +1,5 @@
 import 'dart:async';
 
-import 'package:easychat/easychat.dart';
-import 'package:example/chat.room.screen.dart';
 import 'package:example/chat.screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -22,22 +20,23 @@ class _HomeScreenState extends State<HomeScreen> {
     super.initState();
 
     Timer.run(() {
-      // Navigator.of(context).push(MaterialPageRoute(builder: (_) => const ChatScreen()));
+      Navigator.of(context).push(MaterialPageRoute(builder: (_) => const ChatScreen()));
 
-      Navigator.of(context).push(
-        MaterialPageRoute(
-          /// Open the chat room screen with a chat room for the UI work and testing.
-          builder: (_) => ChatRoomScreen(
-            /// Get the chat room from the firestore and pass it to the screen for the test.
-            room: ChatRoomModel.fromMap(
-              id: 'mFpHRSZLCemCfC2B9Y3B',
-              map: {
-                'name': 'Test Chat Room',
-              },
-            ),
-          ),
-        ),
-      );
+// // How to test a chat room screen:
+//       Navigator.of(context).push(
+//         MaterialPageRoute(
+//           /// Open the chat room screen with a chat room for the UI work and testing.
+//           builder: (_) => ChatRoomScreen(
+//             /// Get the chat room from the firestore and pass it to the screen for the test.
+//             room: ChatRoomModel.fromMap(
+//               id: 'mFpHRSZLCemCfC2B9Y3B',
+//               map: {
+//                 'name': 'Test Chat Room',
+//               },
+//             ),
+//           ),
+//         ),
+//       );
     });
   }
 

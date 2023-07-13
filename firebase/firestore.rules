@@ -1,0 +1,24 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Master can change all the fields.
+    // Moderator can only change some of the fields.
+    // Chat members can only add or delete their own uid into `users` field.
+    match /easy-chat-rooms/{documentId} {
+      allow get: if true;
+      allow list: if true;
+      allow create: if resource.request.data.master == request.auth.uid;
+      allow update: if false;
+      allow delete: if false;
+    }
+    match /easy-chat-messages/{documentId} {
+      allow read,write: if true;
+    }
+
+    match /readonly/{documentId} {
+      allow read: if true;
+      allow write: if false;
+    }
+  }
+}

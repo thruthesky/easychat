@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:easychat/easychat.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class EasyChat {
   // The instance of the EasyChat singleton.
@@ -26,6 +27,7 @@ class EasyChat {
       'roomId': room.id,
       'text': text,
       'createdAt': FieldValue.serverTimestamp(),
+      'master': FirebaseAuth.instance.currentUser!.uid,
     });
   }
 }
