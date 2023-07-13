@@ -50,25 +50,7 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16),
             child: SafeArea(
-              child: Row(
-                children: [
-                  Expanded(
-                    child: TextField(
-                      controller: message,
-                      decoration: const InputDecoration(hintText: 'Message', border: InputBorder.none),
-                    ),
-                  ),
-                  IconButton(
-                    onPressed: () async {
-                      await EasyChat.instance.sendMessage(
-                        room: widget.room,
-                        text: message.text,
-                      );
-                    },
-                    icon: const Icon(Icons.send),
-                  ),
-                ],
-              ),
+              child: ChatRoomMessageBox(room: widget.room),
             ),
           ),
         ],
