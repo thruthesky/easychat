@@ -1,6 +1,9 @@
 import 'dart:async';
 
+import 'package:easychat/easychat.dart';
 import 'package:example/chat.screen.dart';
+import 'package:example/example.chat.room.screen.dart';
+import 'package:example/user.list.screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
@@ -18,15 +21,18 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
+    EasyChat.instance.initialize(usersCollection: 'users', displayNameField: 'displayName', photoUrlField: 'photoUrl');
 
     Timer.run(() {
-      Navigator.of(context).push(MaterialPageRoute(builder: (_) => const ChatScreen()));
+      // Navigator.of(context).push(MaterialPageRoute(builder: (_) => const ChatScreen()));
+
+      Navigator.of(context).push(MaterialPageRoute(builder: (_) => const UserListScren()));
 
 // // How to test a chat room screen:
 //       Navigator.of(context).push(
 //         MaterialPageRoute(
 //           /// Open the chat room screen with a chat room for the UI work and testing.
-//           builder: (_) => ChatRoomScreen(
+//           builder: (_) => ExampleChatRoomScreen(
 //             /// Get the chat room from the firestore and pass it to the screen for the test.
 //             room: ChatRoomModel.fromMap(
 //               id: 'mFpHRSZLCemCfC2B9Y3B',
@@ -102,7 +108,34 @@ class _HomeScreenState extends State<HomeScreen> {
                               onPressed: () async {
                                 Navigator.of(context).push(MaterialPageRoute(builder: (_) => const ChatScreen()));
                               },
-                              child: const Text('Open EasyChat'),
+                              child: const Text('Open EasyChat Room List'),
+                            ),
+                            const SizedBox(height: 16),
+                            ElevatedButton(
+                              onPressed: () async {
+                                Navigator.of(context).push(MaterialPageRoute(builder: (_) => const UserListScren()));
+                              },
+                              child: const Text('Open User List'),
+                            ),
+                            const SizedBox(height: 16),
+                            ElevatedButton(
+                              onPressed: () async {
+                                Navigator.of(context).push(
+                                  MaterialPageRoute(
+                                    /// Open the chat room screen with a chat room for the UI work and testing.
+                                    builder: (_) => ExampleChatRoomScreen(
+                                      /// Get the chat room from the firestore and pass it to the screen for the test.
+                                      room: ChatRoomModel.fromMap(
+                                        id: 'mFpHRSZLCemCfC2B9Y3B',
+                                        map: {
+                                          'name': 'Test Chat Room',
+                                        },
+                                      ),
+                                    ),
+                                  ),
+                                );
+                              },
+                              child: const Text('Open Example Chat Room'),
                             ),
                           ],
                         );

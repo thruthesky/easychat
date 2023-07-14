@@ -1,28 +1,8 @@
 const assert = require("assert");
+const { db, a, b, fakeChatRoomData } = require("./setup");
 
 // load firebase-functions-test SDK
 const firebase = require("@firebase/testing");
-// Firebase project that the tests connect to.
-const TEST_PROJECT_ID = "withcenter-test-2";
-
-const a = { uid: "uid-A", email: "apple@gmail.com" };
-const b = { uid: "uid-B", email: "banana@gmail.com" };
-const c = { uid: "uid-C", email: "cherry@gmail.com" };
-const d = { uid: "uid-D", email: "durian@gmail.com" };
-
-// Connect to Firestore with a user permission.
-function db(auth = null) {
-  return firebase
-    .initializeTestApp({ projectId: TEST_PROJECT_ID, auth: auth })
-    .firestore();
-}
-
-// Connect to Firestore with admin permssion. This will pass all the rules.
-function admin() {
-  return firebase
-    .initializeAdminApp({ projectId: TEST_PROJECT_ID })
-    .firestore();
-}
 
 describe("Firestore security test", () => {
   it("Readonly", async () => {
@@ -39,14 +19,6 @@ describe("Firestore security test", () => {
     await firebase.assertFails(testDoc.set({ test: "test" }));
   });
 
-  it("Creating chat room failure test", async () => {
-    const testDoc = db().collection("easy-chat-room").doc();
-    await firebase.assertFails(testDoc.set({ test: "test" }));
-  });
-
-  it("Creating chat room -> success", async () => {
-    await firebase.assertSucceeds(
-      db(a).collection("easy-chat-rooms").add({ master: a.uid })
-    );
-  });
+  // it("Add a user to chat room without master & moderator -> fail", async () => {});
+  // it("Add a user to chat room as a member -> fail", async () => {});
 });

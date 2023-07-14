@@ -10,21 +10,66 @@ class EasyChat {
   // The private constructor for the EasyChat singleton.
   EasyChat._();
 
-  CollectionReference get chatRoomsCol => FirebaseFirestore.instance.collection('easy-chat-rooms');
-  CollectionReference get chatMessagesCol => FirebaseFirestore.instance.collection('easy-chat-messages');
+  CollectionReference get chatCol => FirebaseFirestore.instance.collection('easychat');
+  CollectionReference userCol(String roomId) => chatCol.doc(roomId).collection('users');
+  CollectionReference messageCol(String roomId) => chatCol.doc(roomId).collection('messages');
 
-  createChatRoom({required String name}) async {
-    await chatRoomsCol.add({
+  late final String usersCollection;
+  late final String displayNameField;
+  late final String photoUrlField;
+
+  initialize({
+    required String usersCollection,
+    required String displayNameField,
+    required String photoUrlField,
+  }) {
+    this.usersCollection = usersCollection;
+    this.displayNameField = displayNameField;
+    this.photoUrlField = photoUrlField;
+  }
+
+  getSingleChatRoomId(String? otherUserUid) {
+    if (otherUserUid == null) return null;
+    final currentUserUid = FirebaseAuth.instance.currentUser!.uid;
+    final uids = [currentUserUid, otherUserUid];
+    uids.sort();
+    return uids.join('-');
+  }
+
+  /// Create chat room
+  ///
+  /// If [otherUserUid] is set, it is a 1:1 chat.
+  /// If [userUids] is set, it is a group chat.
+  createChatRoom({
+    String? name,
+    String? otherUserUid,
+    List<String>? userUids,
+  }) async {
+    final roomId = getSingleChatRoomId(otherUserUid);
+    await chatCol.doc(roomId).set({
       'master': FirebaseAuth.instance.currentUser!.uid,
-      'name': name,
+      'name': name ?? '',
     });
+
+    if (userUids == null) {
+      userUids = [otherUserUid!, FirebaseAuth.instance.currentUser!.uid];
+    } else {
+      userUids.add(FirebaseAuth.instance.currentUser!.uid);
+    }
+
+    for (final userUid in userUids) {
+      await userCol(roomId).doc(userUid).set({
+        'master': FirebaseAuth.instance.currentUser!.uid,
+        'name': name ?? '',
+      });
+    }
   }
 
   sendMessage({
     required ChatRoomModel room,
     required String text,
   }) async {
-    await chatMessagesCol.add({
+    await messageCol(room.id).add({
       'roomId': room.id,
       'text': text,
       'createdAt': FieldValue.serverTimestamp(),

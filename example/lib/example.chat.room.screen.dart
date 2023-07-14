@@ -3,16 +3,16 @@ import 'package:flutter/material.dart';
 
 /// Sample chat room screen to show how to use EasyChat.
 /// This is for UI design purposes only and this is the the way how it should be used in real app design.
-class ChatRoomScreen extends StatefulWidget {
-  const ChatRoomScreen({super.key, required this.room});
+class ExampleChatRoomScreen extends StatefulWidget {
+  const ExampleChatRoomScreen({super.key, required this.room});
 
   final ChatRoomModel room;
 
   @override
-  State<ChatRoomScreen> createState() => _ChatRoomScreenState();
+  State<ExampleChatRoomScreen> createState() => _ExampleChatRoomScreenState();
 }
 
-class _ChatRoomScreenState extends State<ChatRoomScreen> {
+class _ExampleChatRoomScreenState extends State<ExampleChatRoomScreen> {
   final message = TextEditingController();
   @override
   Widget build(BuildContext context) {

@@ -8,3 +8,4 @@ export 'src/models/chat_message_model.dart';
 
 export 'src/widgets/chat_message_list.dart';
 export 'src/widgets/chat_message_box.dart';
+export 'src/models/user_model.dart';
