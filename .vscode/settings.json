@@ -1,0 +1,8 @@
+{
+  "editor.defaultFormatter": "Dart-Code.dart-code",
+  "[javascript]": {
+    "editor.defaultFormatter": "rvest.vs-code-prettier-eslint"
+  },
+  "editor.formatOnPaste": true,
+  "editor.formatOnSave": true
+}

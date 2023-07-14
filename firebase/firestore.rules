@@ -8,7 +8,7 @@ service cloud.firestore {
     match /easy-chat-rooms/{documentId} {
       allow get: if true;
       allow list: if true;
-      allow create: if resource.request.data.master == request.auth.uid;
+      allow create: if debug(request.resource.data.master) == request.auth.uid;
       allow update: if false;
       allow delete: if false;
     }

@@ -15,6 +15,7 @@ class EasyChat {
 
   createChatRoom({required String name}) async {
     await chatRoomsCol.add({
+      'master': FirebaseAuth.instance.currentUser!.uid,
       'name': name,
     });
   }

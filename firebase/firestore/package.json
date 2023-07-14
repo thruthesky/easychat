@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "mocha --watch tests/test.spec.js"
+    "test": "mocha --watch tests/test.spec.js",
+    "deploy": "firebase deploy --only firestore:rules"
   },
   "keywords": [],
   "author": "",
@@ -15,3 +16,4 @@
     "mocha": "^10.2.0"
   }
 }
+
