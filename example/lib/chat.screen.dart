@@ -1,5 +1,6 @@
 import 'package:easychat/easychat.dart';
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class ChatScreen extends StatefulWidget {
   const ChatScreen({super.key, this.user});
@@ -34,7 +35,8 @@ class _ChatScreenState extends State<ChatScreen> {
                 builder: (_) => ChatRoomCreate(
                   success: () => Navigator.of(context).pop(),
                   cancel: () => Navigator.of(context).pop(),
-                  error: () => const ScaffoldMessenger(child: Text('Error creating chat room')),
+                  error: () => const ScaffoldMessenger(
+                      child: Text('Error creating chat room')),
                 ),
               );
             },
@@ -54,22 +56,27 @@ class _ChatScreenState extends State<ChatScreen> {
   showChatRoom({
     ChatRoomModel? room,
     UserModel? user,
-  }) async {
-    assert(room != null || user != null, "One of room or user must be not null");
+  }) {
+    assert(
+        room != null || user != null, "One of room or user must be not null");
 
-    if (room == null) {
-      // If 1:1 chat room exists, then enter the chat room.
-      EasyChat.instance.createChatRoom(name: 'name');
-    }
     showGeneralDialog(
       context: context,
       pageBuilder: (_, __, ___) {
-        return Scaffold(
-          appBar: AppBar(
-            backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-            title: Text(room!.name),
-          ),
-          body: const Text("Chat Room"),
+        return FutureBuilder(
+          future: FirebaseFirestore.instance
+              .collection('easychat')
+              .doc(room?.id ?? EasyChat.getSingleChatRoomId(user!.uid))
+              .get(),
+          builder: (context, snapshot) {
+            return Scaffold(
+              appBar: AppBar(
+                backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+                title: Text(room?.name ?? user?.displayName ?? "Chat Room"),
+              ),
+              body: const Text("Chat Room"),
+            );
+          },
         );
       },
     );

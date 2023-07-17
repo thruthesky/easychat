@@ -16,10 +16,12 @@ class _ChatRoomListState extends State<ChatRoomList> {
   @override
   Widget build(BuildContext context) {
     return FirestoreListView(
-      query: FirebaseFirestore.instance.collection('easy-chat-rooms'),
+      query: FirebaseFirestore.instance.collection('easychat'),
       itemBuilder: (context, QueryDocumentSnapshot snapshot) {
         final room = ChatRoomModel.fromDocumentSnapshot(snapshot);
-        return ListTile(title: Text(room.name), onTap: () => widget.onTap(room));
+        return ListTile(
+            title: Text(room.group ? room.name : ''),
+            onTap: () => widget.onTap(room));
       },
     );
   }
