@@ -200,24 +200,27 @@ Scafolld(
 - 1:1 chat room id must be consisted with `uid-uid` pattern in alphabetically sorted.
 
 - When the login user taps on a chat room, it is considered that the user wants to enter the chat room. It may be a 1:1 chat or group chat.
-- When the login user taps on a user, it means, the login user want to chat with the user alone. It will be only 1:1 chat.
+  - In this case, the app will deliver `ChatRoomModel` as a prameter to chat room list screen and chat room list screen will open the chat room.
+- When the login user taps on a user, it means, the login user want to chat with the user. It will be only 1:1 chat.
+  - Int his case, the app will deliver `UserModel` as a parameter to chat room list screen and chat room list screen will open the chat room.
+  - When the login user taps on a user, the app must search if the 1:1 chat room exsits.
+    - If yes, enter the chat room,
+    - If not, create 1:1 chat room and put the two as a member of the chat room, and enter.
 - When one of user in 1:1 chat invites another user, new group chat room will be created and the three users will be the starting members of the chat room.
   - And the new chat room is a group chat room and more members would invited (without creating another chat room).
 
-- When the login user taps on a user, the app must search if the 1:1 chat room exsits.
-  - If yes, enter the chat room,
-  - If not, create 1:1 chat room and put the two as a member of the chat room, and enter.
-
 - Any user in the chat room can invite other user unless it is password-locked.
-  - Inviting means, creating a user document in the `/easychat/{id}/users` collection. Whoever creates a doc in this collection can chat in the room.
+- The `inviting` means, the invitor will create a user document in the `/easychat/{id}/users` collection with the uid of `invitee`. 
+  - It is same as `joining`. If a user searches a chat room and by clicking the chat room, the user is going to enter or join the room.
+    - If the user has no document under `/easychat/{id}/users/{his-uid}`, then the user needs to create one and this is called `join`.
 
 - Any one can join the chat room if `/easychat/{id}/{ open: true }`.
   - 1:1 chat room must not have `{open: false}`.
 
-- If a chat room has `{open: false}`, no body can join the chat room any more except the invitation of master and moderators.
+- If a chat room has `{open: false}`, no body can join the room except the invitation of master and moderators.
 
-- group chat room must have `{group: [boolean], open: [boolean]}`. This is for searching purpose in Firestore.
-  - For 1:1 chat room, it must be `{group: false}`. This is for searching purpose in Firestore.
+- group chat room must have `{group: true, open: [boolean]}`. This is for searching purpose in Firestore.
+  - For 1:1 chat room, it must be `{group: false, open: false}`. This is for searching purpose in Firestore.
 
 
 

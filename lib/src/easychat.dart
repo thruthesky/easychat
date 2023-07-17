@@ -1,7 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:easychat/easychat.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/foundation.dart';
 
 class EasyChat {
   // The instance of the EasyChat singleton.
@@ -11,12 +10,9 @@ class EasyChat {
   // The private constructor for the EasyChat singleton.
   EasyChat._();
 
-  CollectionReference get chatCol =>
-      FirebaseFirestore.instance.collection('easychat');
-  CollectionReference userCol(String roomId) =>
-      chatCol.doc(roomId).collection('users');
-  CollectionReference messageCol(String roomId) =>
-      chatCol.doc(roomId).collection('messages');
+  CollectionReference get chatCol => FirebaseFirestore.instance.collection('easychat');
+  CollectionReference userCol(String roomId) => chatCol.doc(roomId).collection('users');
+  CollectionReference messageCol(String roomId) => chatCol.doc(roomId).collection('messages');
 
   DocumentReference roomDoc(String roomId) => chatCol.doc(roomId);
 
@@ -34,7 +30,13 @@ class EasyChat {
     this.photoUrlField = photoUrlField;
   }
 
-  static getSingleChatRoomId(String? otherUserUid) {
+  Future<UserModel?> getUser(String uid) async {
+    final snapshot = await FirebaseFirestore.instance.collection(usersCollection).doc(uid).get();
+    if (!snapshot.exists) return null;
+    return UserModel.fromDocumentSnapshot(snapshot);
+  }
+
+  getSingleChatRoomId(String? otherUserUid) {
     if (otherUserUid == null) return null;
     final currentUserUid = FirebaseAuth.instance.currentUser!.uid;
     final uids = [currentUserUid, otherUserUid];
@@ -42,73 +44,59 @@ class EasyChat {
     return uids.join('-');
   }
 
-  // TODO For confirmation separate 1on1 creation of room from group chat creation
+  Future<ChatRoomModel?> getSingleChatRoom(String uid) async {
+    final roomId = getSingleChatRoomId(uid);
+    final snapshot = await roomDoc(roomId).get();
+    if (!snapshot.exists) return null;
+    return ChatRoomModel.fromDocumentSnapshot(snapshot);
+  }
+
+  Future<ChatRoomModel> getOrCreateSingleChatRoom(String uid) async {
+    final room = await EasyChat.instance.getSingleChatRoom(uid);
+    if (room != null) return room;
+    return await EasyChat.instance.createChatRoom(
+      otherUserUid: uid,
+    );
+  }
 
   /// Create chat room
   ///
-  /// If [otherUserUid] is set, it is a 1:1 chat.
-  /// If [userUids] is set, it is a group chat.
+  /// If [otherUserUid] is set, it is a 1:1 chat. If it is unset, it's a group chat.
   createChatRoom({
-    String? name,
+    String? roomName,
     String? otherUserUid,
-    List<String>? userUids,
+    bool isOpen = false,
   }) async {
-    final roomId = getSingleChatRoomId(otherUserUid);
-    await chatCol.doc(roomId).set({
-      'master': FirebaseAuth.instance.currentUser!.uid,
-      'name': name ?? '',
-    });
+    // prepare
+    String myUid = FirebaseAuth.instance.currentUser!.uid;
+    bool isSingleChat = otherUserUid != null;
+    bool isGroupChat = !isSingleChat;
+    List<String> users = [myUid];
+    if (isSingleChat) users.add(otherUserUid);
 
-    if (userUids == null) {
-      userUids = [otherUserUid!, FirebaseAuth.instance.currentUser!.uid];
-    } else {
-      userUids.add(FirebaseAuth.instance.currentUser!.uid);
-    }
-
-    for (final userUid in userUids) {
-      await userCol(roomId).doc(userUid).set({
-        'master': FirebaseAuth.instance.currentUser!.uid,
-        'name': name ?? '',
-      });
-    }
-  }
-
-  createGroupChatRoom({
-    String? name,
-    List<String>? userUids,
-  }) async {
-    await chatCol.add({
-      'master': FirebaseAuth.instance.currentUser!.uid,
-      'name': name ?? '',
+    // room data
+    final roomData = {
+      'master': myUid,
+      'name': roomName ?? '',
       'createdAt': FieldValue.serverTimestamp(),
-      'group': true,
-      'open': false,
-    }).then((value) {
-      debugPrint("value: ${value.id}");
-    });
-  }
+      'group': isGroupChat,
+      'open': isOpen,
+    };
 
-  create1on1ChatRoom({
-    String? otherUserUid,
-  }) async {
-    final String roomId = getSingleChatRoomId(otherUserUid);
-    final doc = await chatCol.doc(roomId).get();
-    if (!doc.exists) {
-      await chatCol.doc(roomId).set({
-        'master': FirebaseAuth.instance.currentUser!.uid,
-        'name': '', // TODO I think name should be optional in 1o1 chat
-        'createdAt': FieldValue.serverTimestamp(),
-        'group': false,
-        'open': false,
-      });
-      userCol(roomId).doc(FirebaseAuth.instance.currentUser!.uid).set({
-        'displayName': FirebaseAuth.instance.currentUser!.displayName,
-        'email': FirebaseAuth.instance.currentUser!.email,
-        'photoUrl': FirebaseAuth.instance.currentUser!.photoURL,
-      });
-      userCol(roomId).doc(otherUserUid).set({
-        'displayName': '',
-        // TODO get other user details
+    // chat room id
+    final roomId = isSingleChat ? getSingleChatRoomId(otherUserUid) : chatCol.doc().id;
+    await chatCol.doc(roomId).set(roomData);
+
+    // promise.all() or transaction.
+    // async/await..
+
+    // Create users (invite)
+    for (final uid in users) {
+      final user = await getUser(uid);
+      await userCol(roomId).doc(uid).set({
+        'uid': uid,
+        'displayName': user?.displayName ?? '',
+        'photoUrl': user?.photoUrl ?? '',
       });
     }
   }

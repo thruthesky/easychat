@@ -3,10 +3,7 @@ import 'package:flutter/material.dart';
 
 class ChatRoomCreate extends StatefulWidget {
   const ChatRoomCreate(
-      {super.key,
-      required this.success,
-      required this.cancel,
-      required this.error});
+      {super.key, required this.success, required this.cancel, required this.error});
 
   final void Function() success;
   final void Function() cancel;
@@ -40,8 +37,8 @@ class _ChatRoomCreateState extends State<ChatRoomCreate> {
         ),
         TextButton(
           onPressed: () async {
-            await EasyChat.instance.createGroupChatRoom(
-              name: name.text,
+            await EasyChat.instance.createChatRoom(
+              roomName: name.text,
             );
             widget.success();
           },
