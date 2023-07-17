@@ -20,6 +20,8 @@ class EasyChat {
   late final String displayNameField;
   late final String photoUrlField;
 
+  final Map<String, UserModel> _userCache = {};
+
   initialize({
     required String usersCollection,
     required String displayNameField,
@@ -30,10 +32,16 @@ class EasyChat {
     this.photoUrlField = photoUrlField;
   }
 
+  /// Get user
+  ///
+  /// It does memory cache.
   Future<UserModel?> getUser(String uid) async {
+    if (_userCache.containsKey(uid)) return _userCache[uid];
     final snapshot = await FirebaseFirestore.instance.collection(usersCollection).doc(uid).get();
     if (!snapshot.exists) return null;
-    return UserModel.fromDocumentSnapshot(snapshot);
+    final user = UserModel.fromDocumentSnapshot(snapshot);
+    _userCache[uid] = user;
+    return _userCache[uid];
   }
 
   getSingleChatRoomId(String? otherUserUid) {
@@ -62,7 +70,7 @@ class EasyChat {
   /// Create chat room
   ///
   /// If [otherUserUid] is set, it is a 1:1 chat. If it is unset, it's a group chat.
-  createChatRoom({
+  Future<ChatRoomModel> createChatRoom({
     String? roomName,
     String? otherUserUid,
     bool isOpen = false,
@@ -81,24 +89,24 @@ class EasyChat {
       'createdAt': FieldValue.serverTimestamp(),
       'group': isGroupChat,
       'open': isOpen,
+      'users': users,
     };
 
     // chat room id
     final roomId = isSingleChat ? getSingleChatRoomId(otherUserUid) : chatCol.doc().id;
     await chatCol.doc(roomId).set(roomData);
 
-    // promise.all() or transaction.
-    // async/await..
-
     // Create users (invite)
-    for (final uid in users) {
-      final user = await getUser(uid);
-      await userCol(roomId).doc(uid).set({
-        'uid': uid,
-        'displayName': user?.displayName ?? '',
-        'photoUrl': user?.photoUrl ?? '',
-      });
-    }
+    // for (final uid in users) {
+    //   final user = await getUser(uid);
+    //   await userCol(roomId).doc(uid).set({
+    //     'uid': uid,
+    //     'displayName': user?.displayName ?? '',
+    //     'photoUrl': user?.photoUrl ?? '',
+    //   });
+    // }
+
+    return ChatRoomModel.fromMap(map: roomData, id: roomId);
   }
 
   sendMessage({
@@ -111,5 +119,13 @@ class EasyChat {
       'createdAt': FieldValue.serverTimestamp(),
       'master': FirebaseAuth.instance.currentUser!.uid,
     });
+  }
+
+  /// Get other user uid
+  ///
+  /// ! It will throw an exception if there is no other user uid. So, use it only in 1:1 chat with minimum of 2 users in array.
+  String getOtherUserUid(List<String> users) {
+    final currentUserUid = FirebaseAuth.instance.currentUser!.uid;
+    return users.firstWhere((uid) => uid != currentUserUid);
   }
 }

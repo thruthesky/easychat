@@ -63,7 +63,7 @@
 * The firestore structure for easychat is fixed. If you want to change, you may need to change the security rules and the source code of the package.
 * `/easychat` is the root collection for all chat. The document inside this collection has chat room information.
 * `/eachchat/{documentId}/messages` is the collection for storing all the chat messages.
-* `/easychat/{documentId}/users` is the collection for storing all users in the chat room with displayName and photoUrl. Using it as a subcollection make it more easy to maintain the users and security.
+
 
 
 
@@ -210,9 +210,8 @@ Scafolld(
   - And the new chat room is a group chat room and more members would invited (without creating another chat room).
 
 - Any user in the chat room can invite other user unless it is password-locked.
-- The `inviting` means, the invitor will create a user document in the `/easychat/{id}/users` collection with the uid of `invitee`. 
-  - It is same as `joining`. If a user searches a chat room and by clicking the chat room, the user is going to enter or join the room.
-    - If the user has no document under `/easychat/{id}/users/{his-uid}`, then the user needs to create one and this is called `join`.
+- The `inviting` means, the invitor will add the `invitee`'s uid into `users` field.
+  - It is same as `joining`. If the user who wants to join the room, he will simply add his uid into `users` field. That's called `joining`.
 
 - Any one can join the chat room if `/easychat/{id}/{ open: true }`.
   - 1:1 chat room must not have `{open: false}`.

@@ -37,7 +37,7 @@ function admin() {
  * @param {*} options
  * @returns returns chat room data
  */
-function fakeChatRoomData(options = {}) {
+function tempChatRoomData(options = {}) {
   return Object.assign(
     {},
     {
@@ -51,7 +51,7 @@ function fakeChatRoomData(options = {}) {
 
 exports.db = db;
 exports.admin = admin;
-exports.fakeChatRoomData = fakeChatRoomData;
+exports.tempChatRoomData = tempChatRoomData;
 exports.a = a;
 exports.b = b;
 exports.c = c;

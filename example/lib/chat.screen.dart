@@ -10,12 +10,13 @@ class ChatScreen extends StatefulWidget {
 }
 
 class _ChatScreenState extends State<ChatScreen> {
+  final ChatRoomListController controller = ChatRoomListController();
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       if (widget.user != null) {
-        showChatRoom(user: widget.user);
+        controller.state.showChatRoom(user: widget.user);
       }
     });
   }
@@ -42,39 +43,9 @@ class _ChatScreenState extends State<ChatScreen> {
           ),
         ],
       ),
-      body: ChatRoomList(onTap: (room) => showChatRoom(room: room)),
+      body: ChatRoomList(
+        controller: controller,
+      ),
     );
-  }
-
-  /// Open Chat Room
-  ///
-  /// When the user taps on a chat room, this method is called to open the chat room.
-  /// When the login user taps on a user NOT a chat room, then the user want to chat 1:1. That's why the user tap on the user.
-  /// In this case, search if there is a chat room the method checks if the 1:1 chat room exists or not.
-  showChatRoom({
-    ChatRoomModel? room,
-    UserModel? user,
-  }) async {
-    assert(room != null || user != null, "One of room or user must be not null");
-
-    // If it is 1:1 chat, get the chat room. (or create if it does not exist)
-    if (user != null) {
-      room = await EasyChat.instance.getOrCreateSingleChatRoom(user.uid);
-    }
-
-    if (mounted) {
-      showGeneralDialog(
-        context: context,
-        pageBuilder: (_, __, ___) {
-          return Scaffold(
-            appBar: AppBar(
-              backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-              title: Text(room?.name ?? user?.displayName ?? "Chat Room"),
-            ),
-            body: const Text("Chat Room"),
-          );
-        },
-      );
-    }
   }
 }

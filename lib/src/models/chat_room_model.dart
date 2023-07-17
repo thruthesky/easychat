@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:easychat/easychat.dart';
 
 class ChatRoomModel {
   final String id;
@@ -6,6 +7,7 @@ class ChatRoomModel {
   final bool group;
   final bool open;
   final String master;
+  final List<String> users;
 
   ChatRoomModel({
     required this.id,
@@ -13,23 +15,22 @@ class ChatRoomModel {
     required this.group,
     required this.open,
     required this.master,
+    required this.users,
   });
 
-  factory ChatRoomModel.fromDocumentSnapshot(
-      DocumentSnapshot documentSnapshot) {
+  factory ChatRoomModel.fromDocumentSnapshot(DocumentSnapshot documentSnapshot) {
     return ChatRoomModel.fromMap(
-        map: documentSnapshot.data() as Map<String, dynamic>,
-        id: documentSnapshot.id);
+        map: documentSnapshot.data() as Map<String, dynamic>, id: documentSnapshot.id);
   }
 
-  factory ChatRoomModel.fromMap(
-      {required Map<String, dynamic> map, required id}) {
+  factory ChatRoomModel.fromMap({required Map<String, dynamic> map, required id}) {
     return ChatRoomModel(
       id: id,
-      name: (map['name'] ?? '') as String,
-      group: map['group'] as bool,
-      open: map['open'] as bool,
-      master: (map['master'] ?? '') as String,
+      name: map['name'] ?? '',
+      group: map['group'],
+      open: map['open'],
+      master: map['master'],
+      users: List<String>.from((map['users'] ?? [])),
     );
   }
 
@@ -40,9 +41,16 @@ class ChatRoomModel {
       'group': group,
       'open': open,
       'master': master,
+      'users': users,
     };
   }
 
   @override
-  String toString() => 'ChatRoomModel(id: $id, name: $name)';
+  String toString() =>
+      'ChatRoomModel(id: $id, name: $name, group: $group, open: $open, master: $master, users: $users)';
+
+  String get otherUserUid {
+    assert(users.length == 2 && group == false, "This is not a single chat room");
+    return EasyChat.instance.getOtherUserUid(users);
+  }
 }
