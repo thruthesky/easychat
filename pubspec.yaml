@@ -1,6 +1,6 @@
 name: easychat
 description: This package helps you to create a chat app easily.
-version: 0.0.2
+version: 0.0.3
 homepage: https://github.com/thruthesky/easychat
 
 environment:
