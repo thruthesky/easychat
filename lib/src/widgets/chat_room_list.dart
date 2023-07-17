@@ -34,7 +34,10 @@ class ChatRoomListState extends State<ChatRoomList> {
       itemBuilder: (context, QueryDocumentSnapshot snapshot) {
         final room = ChatRoomModel.fromDocumentSnapshot(snapshot);
         return ListTile(
-            title: Text(room.group ? room.name : ''), onTap: () => showChatRoom(room: room));
+            title: Text(room.group
+                ? room.name
+                : 'TODO Get Other User ${room.otherUserUid}'),
+            onTap: () => showChatRoom(room: room));
       },
     );
   }
@@ -48,7 +51,8 @@ class ChatRoomListState extends State<ChatRoomList> {
     ChatRoomModel? room,
     UserModel? user,
   }) async {
-    assert(room != null || user != null, "One of room or user must be not null");
+    assert(
+        room != null || user != null, "One of room or user must be not null");
 
     // If it is 1:1 chat, get the chat room. (or create if it does not exist)
     if (user != null) {
@@ -62,6 +66,15 @@ class ChatRoomListState extends State<ChatRoomList> {
           return Scaffold(
             appBar: ChatRoomAppBar(room: room!),
             body: const Text("Chat Room"),
+            bottomNavigationBar: SafeArea(
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+
+                /// TODO continue here ian
+                /// check the firestore rules for creating messages.
+                child: ChatRoomMessageBox(room: room),
+              ),
+            ),
           );
         },
       );

@@ -20,11 +20,12 @@ class _ChatRoomMessageBoxState extends State<ChatRoomMessageBox> {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        IconButton(onPressed: () {}, icon: const Icon(Icons.camera_alt)),
+        // IconButton(onPressed: () {}, icon: const Icon(Icons.camera_alt)),
         Expanded(
           child: TextField(
             controller: message,
-            decoration: const InputDecoration(hintText: 'Message', border: InputBorder.none),
+            decoration: const InputDecoration(
+                hintText: 'Message', border: InputBorder.none),
           ),
         ),
         IconButton(

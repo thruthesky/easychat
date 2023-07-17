@@ -21,12 +21,16 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
-    EasyChat.instance.initialize(usersCollection: 'users', displayNameField: 'displayName', photoUrlField: 'photoUrl');
+    EasyChat.instance.initialize(
+        usersCollection: 'users',
+        displayNameField: 'displayName',
+        photoUrlField: 'photoUrl');
 
     Timer.run(() {
       // Navigator.of(context).push(MaterialPageRoute(builder: (_) => const ChatScreen()));
 
-      Navigator.of(context).push(MaterialPageRoute(builder: (_) => const UserListScren()));
+      Navigator.of(context)
+          .push(MaterialPageRoute(builder: (_) => const UserListScren()));
 
 // // How to test a chat room screen:
 //       Navigator.of(context).push(
@@ -69,24 +73,32 @@ class _HomeScreenState extends State<HomeScreen> {
                             const SizedBox(height: 16),
                             TextField(
                               controller: email,
-                              decoration: const InputDecoration(border: OutlineInputBorder()),
+                              decoration: const InputDecoration(
+                                  border: OutlineInputBorder()),
                             ),
                             const SizedBox(height: 16),
                             TextField(
                               controller: password,
-                              decoration: const InputDecoration(border: OutlineInputBorder()),
+                              decoration: const InputDecoration(
+                                  border: OutlineInputBorder()),
                             ),
                             const SizedBox(height: 16),
                             Row(children: [
                               ElevatedButton(
                                 onPressed: () async {
-                                  await FirebaseAuth.instance.signInWithEmailAndPassword(email: email.text, password: password.text);
+                                  await FirebaseAuth.instance
+                                      .signInWithEmailAndPassword(
+                                          email: email.text,
+                                          password: password.text);
                                 },
                                 child: const Text('Login'),
                               ),
                               ElevatedButton(
                                 onPressed: () async {
-                                  await FirebaseAuth.instance.createUserWithEmailAndPassword(email: email.text, password: password.text);
+                                  await FirebaseAuth.instance
+                                      .createUserWithEmailAndPassword(
+                                          email: email.text,
+                                          password: password.text);
                                 },
                                 child: const Text('Register'),
                               ),
@@ -95,7 +107,8 @@ class _HomeScreenState extends State<HomeScreen> {
                         )
                       : Column(
                           children: [
-                            Text("You are logged in with: ${user.uid}, ${user.email}"),
+                            Text(
+                                "You are logged in with: ${user.uid}, ${user.email}"),
                             const SizedBox(height: 16),
                             ElevatedButton(
                               onPressed: () async {
@@ -106,14 +119,16 @@ class _HomeScreenState extends State<HomeScreen> {
                             const SizedBox(height: 16),
                             ElevatedButton(
                               onPressed: () async {
-                                Navigator.of(context).push(MaterialPageRoute(builder: (_) => const ChatScreen()));
+                                Navigator.of(context).push(MaterialPageRoute(
+                                    builder: (_) => const ChatScreen()));
                               },
                               child: const Text('Open EasyChat Room List'),
                             ),
                             const SizedBox(height: 16),
                             ElevatedButton(
                               onPressed: () async {
-                                Navigator.of(context).push(MaterialPageRoute(builder: (_) => const UserListScren()));
+                                Navigator.of(context).push(MaterialPageRoute(
+                                    builder: (_) => const UserListScren()));
                               },
                               child: const Text('Open User List'),
                             ),
@@ -129,6 +144,10 @@ class _HomeScreenState extends State<HomeScreen> {
                                         id: 'mFpHRSZLCemCfC2B9Y3B',
                                         map: {
                                           'name': 'Test Chat Room',
+                                          'group': true,
+                                          'open': false,
+                                          'users': [],
+                                          'master': '',
                                         },
                                       ),
                                     ),

@@ -30,13 +30,18 @@ service cloud.firestore {
 
       required(['master', 'createdAt', 'group', 'open', 'users'])
       &&
-      (request.resource.data.group == false && request.resource.data.users.size() == 2)
+      (
+        (request.resource.data.group == false && request.resource.data.users.size() == 2) 
+        || 
+        (request.resource.data.group == true && request.resource.data.users.size() == 1)
+      )
+      &&
+      request.resource.data.users.hasAny([request.resource.data.master])
       &&
       request.resource.data.master == request.auth.uid;
       
       allow update: if false;
       allow delete: if false;
-
 
       // match /users/{userId} {
       //   allow create: if isMaster() || isModerator() || (isOpen() && isMyself());
