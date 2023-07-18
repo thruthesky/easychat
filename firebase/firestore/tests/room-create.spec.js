@@ -57,18 +57,18 @@ describe("Firestore security test chat room", () => {
     );
   });
 
-  it("Check if the group chat must have only 1 user on creation -> failure", async () => {
+  it("Check if the group chat must have only 1 user on creation -> success", async () => {
     await firebase.assertSucceeds(
       db(b)
         .collection("easychat")
         .add(tempChatRoomData({ master: b.uid, users: [b.uid], group: true }))
     );
   });
-  it("Check if the group chat must have only 1 user on creation -> success", async () => {
+  it("Check if the group chat must have only 1 user on creation -> failure", async () => {
     await firebase.assertFails(
       db(a)
         .collection("easychat")
-        .add(tempChatRoomData({ master: b.uid, users: [a.uid, b.uid], group: true }))
+        .add(tempChatRoomData({ master: a.uid, users: [a.uid, b.uid], group: true }))
     );
   });
 });
