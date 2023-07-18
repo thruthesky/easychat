@@ -57,5 +57,8 @@ describe("Firestore security test chat room", () => {
     );
   });
 
+  it("Check if the group chat must have only 1 user on creation -> failure", async () => { });
+  it("Check if the group chat must have only 1 user on creation -> success", async () => { });
+
 
 });
