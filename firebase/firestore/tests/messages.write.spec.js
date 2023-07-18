@@ -11,7 +11,7 @@ describe("Sending messages in a chat room", () => {
                 .collection("easychat")
                 .add(tempChatRoomData({ master: a.uid, users: [a.uid, b.uid] })
                 );
-        console.log('reffy ' + roomRef.id);
+        // console.log('reffy ' + roomRef.id);
         await firebase.assertSucceeds(
             db(a)
                 .collection("easychat")
@@ -37,6 +37,7 @@ describe("Sending messages in a chat room", () => {
     });
 
 });
+
 
 
 

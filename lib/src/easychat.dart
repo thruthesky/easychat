@@ -10,10 +10,12 @@ class EasyChat {
   // The private constructor for the EasyChat singleton.
   EasyChat._();
 
+  String get uid => FirebaseAuth.instance.currentUser!.uid;
+
   CollectionReference get chatCol => FirebaseFirestore.instance.collection('easychat');
-  CollectionReference userCol(String roomId) => chatCol.doc(roomId).collection('users');
   CollectionReference messageCol(String roomId) => chatCol.doc(roomId).collection('messages');
 
+  DocumentReference get myDoc => FirebaseFirestore.instance.collection('users').doc(FirebaseAuth.instance.currentUser!.uid);
   DocumentReference roomDoc(String roomId) => chatCol.doc(roomId);
 
   late final String usersCollection;
@@ -114,7 +116,6 @@ class EasyChat {
     required String text,
   }) async {
     await messageCol(room.id).add({
-      // 'roomId': room.id,
       'text': text,
       'createdAt': FieldValue.serverTimestamp(),
       'sender': FirebaseAuth.instance.currentUser!.uid,

@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:easychat/easychat.dart';
 import 'package:example/chat.screen.dart';
 import 'package:example/example.chat.room.screen.dart';
+import 'package:example/profile.screen.dart';
 import 'package:example/user.list.screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -24,9 +25,9 @@ class _HomeScreenState extends State<HomeScreen> {
     EasyChat.instance.initialize(usersCollection: 'users', displayNameField: 'displayName', photoUrlField: 'photoUrl');
 
     Timer.run(() {
-      // Navigator.of(context).push(MaterialPageRoute(builder: (_) => const ChatScreen()));
+      Navigator.of(context).push(MaterialPageRoute(builder: (_) => const ChatScreen()));
 
-      Navigator.of(context).push(MaterialPageRoute(builder: (_) => const UserListScren()));
+      // Navigator.of(context).push(MaterialPageRoute(builder: (_) => const UserListScren()));
 
 // // How to test a chat room screen:
 //       Navigator.of(context).push(
@@ -141,6 +142,10 @@ class _HomeScreenState extends State<HomeScreen> {
                               },
                               child: const Text('Open Example Chat Room'),
                             ),
+                            ElevatedButton(
+                                onPressed: () =>
+                                    Navigator.of(context).push(MaterialPageRoute(builder: (_) => const ProfileScreen())),
+                                child: const Text('Profile')),
                           ],
                         );
                 }),

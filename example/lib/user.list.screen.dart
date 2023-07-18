@@ -26,9 +26,11 @@ class _UserListScrenState extends State<UserListScren> {
           return ListTile(
             title: Text(user.displayName),
             subtitle: Text(user.uid),
-            leading: CircleAvatar(
-              backgroundImage: NetworkImage(user.photoUrl),
-            ),
+            leading: user.photoUrl.isEmpty
+                ? null
+                : CircleAvatar(
+                    backgroundImage: NetworkImage(user.photoUrl),
+                  ),
             onTap: () => Navigator.of(context).push(
               MaterialPageRoute(
                 builder: (_) => ChatScreen(

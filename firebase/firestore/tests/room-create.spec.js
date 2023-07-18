@@ -27,6 +27,7 @@ describe("Firestore security test chat room", () => {
         .add(tempChatRoomData({ master: a.uid, users: [a.uid], group: true }))
     );
   });
+  
 
   it("Creating a group chat room with wrong master uid -> fail", async () => {
     await firebase.assertFails(
@@ -71,4 +72,12 @@ describe("Firestore security test chat room", () => {
         .add(tempChatRoomData({ master: a.uid, users: [a.uid, b.uid], group: true }))
     );
   });
+  it("Can't create a single chat room with duplicated user uids -> failure", async () => {
+    await firebase.assertFails(
+      db(a)
+        .collection("easychat")
+        .add(tempChatRoomData({ master: a.uid, users: [a.uid, a.uid], group: false }))
+    );
+  });
 });
+

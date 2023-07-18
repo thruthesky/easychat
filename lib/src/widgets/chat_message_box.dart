@@ -27,15 +27,18 @@ class _ChatRoomMessageBoxState extends State<ChatRoomMessageBox> {
             child: TextField(
               controller: message,
               decoration: const InputDecoration(hintText: 'Message', border: InputBorder.none),
+              maxLines: 5,
+              minLines: 1,
             ),
           ),
           IconButton(
             onPressed: () async {
+              final text = message.text;
+              message.text = '';
               await EasyChat.instance.sendMessage(
                 room: widget.room,
-                text: message.text,
+                text: text,
               );
-              message.text = '';
             },
             icon: const Icon(Icons.send),
           ),

@@ -37,13 +37,13 @@ class _ExampleChatRoomScreenState extends State<ExampleChatRoomScreen> {
       body: Column(
         children: [
           Expanded(
-            child: ChatMessageList(
+            child: ChatMessagesListView(
               room: widget.room,
-              itemBuilder: (context, message) {
-                return ListTile(
-                  title: Text(message.text),
-                );
-              },
+              // itemBuilder: (context, message) {
+              //   return ListTile(
+              //     title: Text(message.text),
+              //   );
+              // },
             ),
           ),
           const Divider(height: 0),

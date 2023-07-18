@@ -1,6 +1,7 @@
+import 'dart:developer';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:easychat/easychat.dart';
-import 'package:easychat/src/widgets/chat_messages_view.dart';
 import 'package:firebase_ui_firestore/firebase_ui_firestore.dart';
 import 'package:flutter/material.dart';
 
@@ -30,12 +31,26 @@ class ChatRoomListState extends State<ChatRoomList> {
   @override
   Widget build(BuildContext context) {
     return FirestoreListView(
-      query: EasyChat.instance.chatCol.where('users'), // FirebaseFirestore.instance.collection('easychat'),
+      query: EasyChat.instance.chatCol.where('users', arrayContains: EasyChat.instance.uid),
       itemBuilder: (context, QueryDocumentSnapshot snapshot) {
         final room = ChatRoomModel.fromDocumentSnapshot(snapshot);
         return ListTile(
-            title: Text(room.group ? room.name : 'TODO Get Other User ${room.otherUserUid}'),
+            title: room.group
+                ? Text(room.name)
+                : FutureBuilder(
+                    builder: (_, snapshot) {
+                      if (snapshot.data == null) {
+                        return const SizedBox.shrink();
+                      }
+                      final user = snapshot.data as UserModel;
+                      return Text(user.displayName);
+                    },
+                    future: EasyChat.instance.getUser(room.otherUserUid)),
             onTap: () => showChatRoom(room: room));
+      },
+      errorBuilder: (context, error, stackTrace) {
+        log(error.toString(), stackTrace: stackTrace);
+        return const Center(child: Text('Error loading chat rooms'));
       },
     );
   }
@@ -65,7 +80,7 @@ class ChatRoomListState extends State<ChatRoomList> {
             body: Column(
               children: [
                 Expanded(
-                  child: ChatMessagesView(
+                  child: ChatMessagesListView(
                     room: room,
                   ),
                 ),

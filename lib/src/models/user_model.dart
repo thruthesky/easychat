@@ -16,10 +16,11 @@ class UserModel {
     return UserModel.fromMap(map: documentSnapshot.data() as Map<String, dynamic>, id: documentSnapshot.id);
   }
 
-  factory UserModel.fromMap({required Map<String, dynamic> map, required id}) {
+  factory UserModel.fromMap({required Map<String, dynamic> map, required String id}) {
+    final displayName = map['displayName'] ?? '';
     return UserModel(
       uid: id,
-      displayName: (map['displayName'] ?? '') as String,
+      displayName: displayName == '' ? id.toUpperCase().substring(0, 2) : displayName,
       photoUrl: (map['photoUrl'] ?? '') as String,
     );
   }

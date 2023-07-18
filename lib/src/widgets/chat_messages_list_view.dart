@@ -3,16 +3,16 @@ import 'package:firebase_ui_firestore/firebase_ui_firestore.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:easychat/easychat.dart';
 
-class ChatMessagesView extends StatefulWidget {
-  const ChatMessagesView({super.key, required this.room});
+class ChatMessagesListView extends StatefulWidget {
+  const ChatMessagesListView({super.key, required this.room});
 
   final ChatRoomModel room;
 
   @override
-  State<ChatMessagesView> createState() => _ChatMessagesViewState();
+  State<ChatMessagesListView> createState() => _ChatMessagesViewState();
 }
 
-class _ChatMessagesViewState extends State<ChatMessagesView> {
+class _ChatMessagesViewState extends State<ChatMessagesListView> {
   @override
   Widget build(BuildContext context) {
     final query = EasyChat.instance.messageCol(widget.room.id).orderBy('createdAt', descending: true);
@@ -29,6 +29,10 @@ class _ChatMessagesViewState extends State<ChatMessagesView> {
               Text("Text: ${doc.data()['text']}"),
             ],
           );
+        },
+        errorBuilder: (context, error, stackTrace) {
+          print(error.toString());
+          return Text(error.toString());
         },
       ),
     );

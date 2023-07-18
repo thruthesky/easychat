@@ -26,14 +26,16 @@ class _ChatScreenState extends State<ChatScreen> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: const Text('Easy Chat'),
+        title: const Text('Chat Friends - My Chat Rooms'),
         actions: [
           IconButton(
             onPressed: () async {
               showDialog(
                 context: context,
                 builder: (_) => ChatRoomCreate(
-                  success: () => Navigator.of(context).pop(),
+                  success: () {
+                    Navigator.of(context).pop();
+                  },
                   cancel: () => Navigator.of(context).pop(),
                   error: () => const ScaffoldMessenger(child: Text('Error creating chat room')),
                 ),
