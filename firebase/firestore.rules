@@ -5,11 +5,11 @@ service cloud.firestore {
     // Master can change all the fields.
     // Moderator can only change some of the fields.
     // Chat members can only add or delete their own uid into `users` field.
-    match /easychat/{room} {
+    match /easychat/{roomId} {
 
-      // function roomData() {
-      //   return get(/databases/$(database)/documents/easychat/$(room)).data;
-      // }
+      function roomData() {
+        return get(/databases/$(database)/documents/easychat/$(roomId)).data;
+      }
 
       // function isMaster() {
       //   return  roomData().master == request.auth.uid;
@@ -24,21 +24,26 @@ service cloud.firestore {
       //   return 'open' in roomData() && roomData().open;
       // }
 
+      function isMember() {
+        return 'users' in request.resource.data && request.resource.data.users.hasAny([request.auth.uid]);
+      }
+
       allow get: if true;
       allow list: if true;
       allow create: if 
-
-      required(['master', 'createdAt', 'group', 'open', 'users'])
-      &&
-      (
-        (request.resource.data.group == false && request.resource.data.users.size() == 2) 
-        || 
-        (request.resource.data.group == true && request.resource.data.users.size() == 1)
-      )
-      &&
-      request.resource.data.users.hasAny([request.resource.data.master])
-      &&
-      request.resource.data.master == request.auth.uid;
+        required(['master', 'createdAt', 'group', 'open', 'users'])
+        &&
+        (
+          (request.resource.data.group == false && request.resource.data.users.size() == 2) 
+          || 
+          (request.resource.data.group == true && request.resource.data.users.size() == 1)
+        )
+        &&
+        // The master uid must always be in the users field.
+        request.resource.data.users.hasAny([request.resource.data.master])
+        &&
+        // The master uid must be the creator.
+        request.resource.data.master == request.auth.uid;
       
       allow update: if false;
       allow delete: if false;
@@ -47,6 +52,12 @@ service cloud.firestore {
       //   allow create: if isMaster() || isModerator() || (isOpen() && isMyself());
       //   allow delete: if request.auth.uid == userId;
       // }
+
+      match /messages/{messageId} {
+        allow create: if isMember();
+        allow update: if false;
+        allow delete: if false;
+      }
     }
     
 
