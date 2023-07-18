@@ -17,27 +17,30 @@ class _ChatRoomMessageBoxState extends State<ChatRoomMessageBox> {
   final TextEditingController message = TextEditingController();
   @override
   Widget build(BuildContext context) {
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-        // IconButton(onPressed: () {}, icon: const Icon(Icons.camera_alt)),
-        Expanded(
-          child: TextField(
-            controller: message,
-            decoration: const InputDecoration(
-                hintText: 'Message', border: InputBorder.none),
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          // IconButton(onPressed: () {}, icon: const Icon(Icons.camera_alt)),
+          Expanded(
+            child: TextField(
+              controller: message,
+              decoration: const InputDecoration(hintText: 'Message', border: InputBorder.none),
+            ),
           ),
-        ),
-        IconButton(
-          onPressed: () async {
-            await EasyChat.instance.sendMessage(
-              room: widget.room,
-              text: message.text,
-            );
-          },
-          icon: const Icon(Icons.send),
-        ),
-      ],
+          IconButton(
+            onPressed: () async {
+              await EasyChat.instance.sendMessage(
+                room: widget.room,
+                text: message.text,
+              );
+              message.text = '';
+            },
+            icon: const Icon(Icons.send),
+          ),
+        ],
+      ),
     );
   }
 }

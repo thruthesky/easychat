@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:easychat/easychat.dart';
+import 'package:easychat/src/widgets/chat_messages_view.dart';
 import 'package:firebase_ui_firestore/firebase_ui_firestore.dart';
 import 'package:flutter/material.dart';
 
@@ -29,14 +30,11 @@ class ChatRoomListState extends State<ChatRoomList> {
   @override
   Widget build(BuildContext context) {
     return FirestoreListView(
-      query: EasyChat.instance.chatCol
-          .where('users'), // FirebaseFirestore.instance.collection('easychat'),
+      query: EasyChat.instance.chatCol.where('users'), // FirebaseFirestore.instance.collection('easychat'),
       itemBuilder: (context, QueryDocumentSnapshot snapshot) {
         final room = ChatRoomModel.fromDocumentSnapshot(snapshot);
         return ListTile(
-            title: Text(room.group
-                ? room.name
-                : 'TODO Get Other User ${room.otherUserUid}'),
+            title: Text(room.group ? room.name : 'TODO Get Other User ${room.otherUserUid}'),
             onTap: () => showChatRoom(room: room));
       },
     );
@@ -51,8 +49,7 @@ class ChatRoomListState extends State<ChatRoomList> {
     ChatRoomModel? room,
     UserModel? user,
   }) async {
-    assert(
-        room != null || user != null, "One of room or user must be not null");
+    assert(room != null || user != null, "One of room or user must be not null");
 
     // If it is 1:1 chat, get the chat room. (or create if it does not exist)
     if (user != null) {
@@ -65,15 +62,25 @@ class ChatRoomListState extends State<ChatRoomList> {
         pageBuilder: (_, __, ___) {
           return Scaffold(
             appBar: ChatRoomAppBar(room: room!),
-            body: const Text("Chat Room"),
-            bottomNavigationBar: SafeArea(
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-
-                /// TODO continue here ian
-                /// check the firestore rules for creating messages.
-                child: ChatRoomMessageBox(room: room),
-              ),
+            body: Column(
+              children: [
+                Expanded(
+                  child: ChatMessagesView(
+                    room: room,
+                  ),
+                ),
+                SafeArea(
+                  child: Column(
+                    children: [
+                      const Divider(height: 0),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: ChatRoomMessageBox(room: room),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
             ),
           );
         },
@@ -103,6 +110,60 @@ class ChatRoomAppBarState extends State<ChatRoomAppBar> {
     return AppBar(
       backgroundColor: Theme.of(context).colorScheme.inversePrimary,
       title: ChatRoomAppBarTitle(room: widget.room),
+      actions: [
+        ChatRoomMenuButton(
+          room: widget.room,
+        ),
+      ],
+    );
+  }
+}
+
+class ChatRoomMenuButton extends StatelessWidget {
+  const ChatRoomMenuButton({
+    super.key,
+    required this.room,
+  });
+
+  final ChatRoomModel room;
+  @override
+  Widget build(BuildContext context) {
+    return IconButton(
+      icon: const Icon(Icons.menu),
+      onPressed: () {
+        showDialog(
+          context: context,
+          builder: (context) {
+            return AlertDialog(
+              title: const Text('Group Chat Menu'),
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  TextButton(
+                    child: const Text('View Members'),
+                    onPressed: () {
+                      showGeneralDialog(
+                          context: context,
+                          pageBuilder: (_, __, ___) {
+                            return Scaffold(
+                              appBar: AppBar(
+                                title: const Text('Members'),
+                              ),
+                              body: const Text('Members'),
+                            );
+                          });
+                    },
+                  ),
+                  TextButton(
+                    child: const Text('Change Chat Room Name'),
+                    onPressed: () {},
+                  ),
+                ],
+              ),
+            );
+          },
+        );
+      },
     );
   }
 }
@@ -114,31 +175,40 @@ class ChatRoomAppBarTitle extends StatelessWidget {
   });
 
   final ChatRoomModel room;
-
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder(
-      future: EasyChat.instance.getUser(room.otherUserUid),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Text('Loading...');
-        }
-
-        if (snapshot.hasData == false) {
-          return const Text('Error - no user');
-        }
-
-        final user = snapshot.data as UserModel;
-        return Row(
-          children: [
-            CircleAvatar(
-              backgroundImage: NetworkImage(user.photoUrl),
-            ),
-            const SizedBox(width: 8),
-            Text(user.displayName),
-          ],
-        );
-      },
-    );
+    if (room.group) {
+      return Row(
+        children: [
+          // CircleAvatar(
+          //   backgroundImage: NetworkImage(user.photoUrl),
+          // ),
+          const SizedBox(width: 8),
+          Text(room.name),
+        ],
+      );
+    } else {
+      return FutureBuilder(
+        future: EasyChat.instance.getUser(room.otherUserUid),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Text('Loading...');
+          }
+          if (snapshot.hasData == false) {
+            return const Text('Error - no user');
+          }
+          final user = snapshot.data as UserModel;
+          return Row(
+            children: [
+              CircleAvatar(
+                backgroundImage: NetworkImage(user.photoUrl),
+              ),
+              const SizedBox(width: 8),
+              Text(user.displayName),
+            ],
+          );
+        },
+      );
+    }
   }
 }

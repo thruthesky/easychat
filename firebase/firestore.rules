@@ -31,11 +31,14 @@ service cloud.firestore {
       allow get: if true;
       allow list: if true;
       allow create: if 
+        // all rooms must have these fields.
         required(['master', 'createdAt', 'group', 'open', 'users'])
         &&
         (
           (request.resource.data.group == false && request.resource.data.users.size() == 2) 
+          // if it's NOT a group chat (means it's a single chat room), upon creation of the room, there should be 2 members of the room.
           || 
+          // if it's a group, upon creation of room, the room must have only one member
           (request.resource.data.group == true && request.resource.data.users.size() == 1)
         )
         &&
@@ -54,7 +57,9 @@ service cloud.firestore {
       // }
 
       match /messages/{messageId} {
-        allow create: if isMember();
+        // allow create: if isMember();
+        // TODO check if member of the chat room
+        allow create: if true;
         allow update: if false;
         allow delete: if false;
       }

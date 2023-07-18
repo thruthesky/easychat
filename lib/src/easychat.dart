@@ -109,15 +109,15 @@ class EasyChat {
     return ChatRoomModel.fromMap(map: roomData, id: roomId);
   }
 
-  sendMessage({
+  Future<void> sendMessage({
     required ChatRoomModel room,
     required String text,
   }) async {
     await messageCol(room.id).add({
-      'roomId': room.id,
+      // 'roomId': room.id,
       'text': text,
       'createdAt': FieldValue.serverTimestamp(),
-      'master': FirebaseAuth.instance.currentUser!.uid,
+      'sender': FirebaseAuth.instance.currentUser!.uid,
     });
   }
 
