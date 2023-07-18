@@ -24,8 +24,8 @@ service cloud.firestore {
       //   return 'open' in roomData() && roomData().open;
       // }
 
-      function isMember() {
-        return 'users' in request.resource.data && request.resource.data.users.hasAny([request.auth.uid]);
+      function isRoomUser() {
+        return 'users' in roomData() && roomData().users.hasAny([request.auth.uid]);
       }
 
       allow get: if true;
@@ -35,11 +35,9 @@ service cloud.firestore {
         required(['master', 'createdAt', 'group', 'open', 'users'])
         &&
         (
-          (request.resource.data.group == false && request.resource.data.users.size() == 2) 
-          // if it's NOT a group chat (means it's a single chat room), upon creation of the room, there should be 2 members of the room.
+          (willBeSingleChat() && usersSize() == 2) // if it's NOT a group chat (means it's a single chat room), upon creation of the room, there should be 2 members of the room.
           || 
-          // if it's a group, upon creation of room, the room must have only one member
-          (request.resource.data.group == true && request.resource.data.users.size() == 1)
+          (willBeGroupChat() && usersSize() == 1) // if it's a group, upon creation of room, the room must have only one member
         )
         &&
         // The master uid must always be in the users field.
@@ -56,10 +54,10 @@ service cloud.firestore {
       //   allow delete: if request.auth.uid == userId;
       // }
 
+
       match /messages/{messageId} {
-        // allow create: if isMember();
-        // TODO check if member of the chat room
-        allow create: if true;
+        allow read: if isRoomUser();
+        allow create: if isRoomUser();
         allow update: if false;
         allow delete: if false;
       }
@@ -81,4 +79,17 @@ service cloud.firestore {
 // * Warning : !!! It's not checking the incoming data fields !!!
 function required(fields) {
   return request.resource.data.keys().hasAll( fields );
+}
+
+function willBeGroupChat() {
+  return request.resource.data.group == true;
+}
+
+function willBeSingleChat() {
+  return request.resource.data.group == false;
+}
+
+// Returns the number of users **After save**.
+function usersSize() {
+  return request.resource.data.users.size();
 }

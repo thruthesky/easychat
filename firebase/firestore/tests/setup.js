@@ -36,6 +36,9 @@ function admin() {
  *
  * @param {*} options
  * @returns returns chat room data
+ * 
+ * @example
+ *  - tempChatRoomData({ master: a.uid, users: [a.uid, b.uid] }
  */
 function tempChatRoomData(options = {}) {
   return Object.assign(
@@ -49,9 +52,24 @@ function tempChatRoomData(options = {}) {
   );
 }
 
+/**
+ * 
+ * @param {*} user 
+ * @param {*} options 
+ * @returns chat room ref
+ * @example
+ * - const roomRef = await createChatRoom(a, { master: a.uid, users: [a.uid, b.uid] });
+ */
+function createChatRoom(user, options = {}) {
+  return db(user)
+    .collection("easychat")
+    .add(tempChatRoomData(options));
+}
+
 exports.db = db;
 exports.admin = admin;
 exports.tempChatRoomData = tempChatRoomData;
+exports.createChatRoom = createChatRoom;
 exports.a = a;
 exports.b = b;
 exports.c = c;
