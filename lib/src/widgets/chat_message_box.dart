@@ -20,9 +20,12 @@ class _ChatRoomMessageBoxState extends State<ChatRoomMessageBox> {
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: Row(
-        crossAxisAlignment: CrossAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.end,
         children: [
-          // IconButton(onPressed: () {}, icon: const Icon(Icons.camera_alt)),
+          IconButton(
+            icon: const Icon(Icons.camera_alt),
+            onPressed: onFileUpload,
+          ),
           Expanded(
             child: TextField(
               controller: message,
@@ -33,6 +36,7 @@ class _ChatRoomMessageBoxState extends State<ChatRoomMessageBox> {
           ),
           IconButton(
             onPressed: () async {
+              if (message.text.isEmpty) return;
               final text = message.text;
               message.text = '';
               await EasyChat.instance.sendMessage(
@@ -46,4 +50,6 @@ class _ChatRoomMessageBoxState extends State<ChatRoomMessageBox> {
       ),
     );
   }
+
+  onFileUpload() {}
 }

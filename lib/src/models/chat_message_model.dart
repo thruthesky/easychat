@@ -5,12 +5,14 @@ class ChatMessageModel {
   final String text;
   final String senderUid;
   final Timestamp? createdAt;
+  final String? photoUrl;
 
   ChatMessageModel({
     required this.id,
     required this.text,
     required this.senderUid,
     required this.createdAt,
+    required this.photoUrl,
   });
 
   factory ChatMessageModel.fromDocumentSnapshot(DocumentSnapshot documentSnapshot) {
@@ -23,6 +25,7 @@ class ChatMessageModel {
       text: map['text'],
       senderUid: map['senderUid'],
       createdAt: map['createdAt'],
+      photoUrl: map['photoUrl'],
     );
   }
 
@@ -32,6 +35,7 @@ class ChatMessageModel {
       'text': text,
       'senderUid': senderUid,
       'createdAt': createdAt,
+      'photoUrl': photoUrl,
     };
   }
 
