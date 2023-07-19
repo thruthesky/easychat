@@ -25,13 +25,16 @@ service cloud.firestore {
       function isRoomUser() {
         return resource.data.users.hasAny([request.auth.uid]);
       }
+      function isRoomNotExist() {
+        return resource == null;
+      }
       
       // function isOpen() {
       //   return 'open' in roomData() && roomData().open;
       // }
 
 
-      allow read: if isRoomUser();
+      allow read: if isRoomUser() || isRoomNotExist();
       allow create: if 
         // all rooms must have these fields.
         required(['master', 'createdAt', 'group', 'open', 'users'])

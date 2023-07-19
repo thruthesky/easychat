@@ -158,15 +158,16 @@ class ChatRoomMenuButton extends StatelessWidget {
                     child: const Text('View Members'),
                     onPressed: () {
                       showGeneralDialog(
-                          context: context,
-                          pageBuilder: (_, __, ___) {
-                            return Scaffold(
-                              appBar: AppBar(
-                                title: const Text('Members'),
-                              ),
-                              body: const Text('Members'),
-                            );
-                          });
+                        context: context,
+                        pageBuilder: (_, __, ___) {
+                          return Scaffold(
+                            appBar: AppBar(
+                              title: const Text('Members'),
+                            ),
+                            body: const Text('Members'),
+                          );
+                        },
+                      );
                     },
                   ),
                   TextButton(
@@ -195,9 +196,6 @@ class ChatRoomAppBarTitle extends StatelessWidget {
     if (room.group) {
       return Row(
         children: [
-          // CircleAvatar(
-          //   backgroundImage: NetworkImage(user.photoUrl),
-          // ),
           const SizedBox(width: 8),
           Text(room.name),
         ],
@@ -215,9 +213,11 @@ class ChatRoomAppBarTitle extends StatelessWidget {
           final user = snapshot.data as UserModel;
           return Row(
             children: [
-              CircleAvatar(
-                backgroundImage: NetworkImage(user.photoUrl),
-              ),
+              user.photoUrl.isEmpty
+                  ? const SizedBox()
+                  : CircleAvatar(
+                      backgroundImage: NetworkImage(user.photoUrl),
+                    ),
               const SizedBox(width: 8),
               Text(user.displayName),
             ],

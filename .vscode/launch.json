@@ -32,6 +32,15 @@
       "cwd": "example"
     },
     {
+      "name": "C. Example - Emulator",
+      "request": "launch",
+      "type": "dart",
+      "deviceId": "emulator-5554",
+      "flutterMode": "debug",
+      "program": "lib/main.dart",
+      "cwd": "example"
+    },
+    {
       "name": "easychat (profile mode)",
       "request": "launch",
       "type": "dart",

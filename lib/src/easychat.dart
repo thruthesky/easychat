@@ -118,7 +118,7 @@ class EasyChat {
     await messageCol(room.id).add({
       'text': text,
       'createdAt': FieldValue.serverTimestamp(),
-      'sender': FirebaseAuth.instance.currentUser!.uid,
+      'senderUid': FirebaseAuth.instance.currentUser!.uid,
     });
   }
 

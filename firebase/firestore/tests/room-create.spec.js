@@ -29,7 +29,6 @@ describe("Firestore security test chat room", () => {
     );
   });
 
-
   it("Creating a group chat room with wrong master uid -> fail", async () => {
     await firebase.assertFails(
       db(a)
