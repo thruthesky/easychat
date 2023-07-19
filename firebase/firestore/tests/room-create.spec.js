@@ -12,6 +12,7 @@ describe("Firestore security test chat room", () => {
         .add(tempChatRoomData({ master: a.uid, users: [a.uid] }))
     );
   });
+
   it("1:1 chat -> success", async () => {
     const ref = await firebase.assertSucceeds(
       db(a)
@@ -27,7 +28,7 @@ describe("Firestore security test chat room", () => {
         .add(tempChatRoomData({ master: a.uid, users: [a.uid], group: true }))
     );
   });
-  
+
 
   it("Creating a group chat room with wrong master uid -> fail", async () => {
     await firebase.assertFails(
@@ -65,6 +66,7 @@ describe("Firestore security test chat room", () => {
         .add(tempChatRoomData({ master: b.uid, users: [b.uid], group: true }))
     );
   });
+
   it("Check if the group chat must have only 1 user on creation -> failure", async () => {
     await firebase.assertFails(
       db(a)
@@ -72,6 +74,7 @@ describe("Firestore security test chat room", () => {
         .add(tempChatRoomData({ master: a.uid, users: [a.uid, b.uid], group: true }))
     );
   });
+
   it("Can't create a single chat room with duplicated user uids -> failure", async () => {
     await firebase.assertFails(
       db(a)

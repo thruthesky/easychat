@@ -27,6 +27,24 @@ describe("Chat room read test", () => {
         );
     });
 
+    it("Read chat room that does not exist - success ", async () => {
+        await firebase.assertSucceeds(await db(b)
+            .collection("easychat")
+            .doc('nonexistingroom')
+            .get()
+        );
+    });
+
+
+    it("Read chat room that exist but not room user - failure ", async () => {
+        const roomRef = await createChatRoom(a, { master: a.uid, users: [a.uid, b.uid] });
+        await firebase.assertFails(
+            db(c)
+                .collection("easychat")
+                .doc(roomRef.id)
+                .get()
+        );
+    });
 
 });
 
