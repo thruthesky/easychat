@@ -22,7 +22,6 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
-    EasyChat.instance.initialize(usersCollection: 'users', displayNameField: 'displayName', photoUrlField: 'photoUrl');
 
     Timer.run(() {
       Navigator.of(context).push(MaterialPageRoute(builder: (_) => const ChatScreen()));

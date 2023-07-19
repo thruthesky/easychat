@@ -3,25 +3,60 @@ import 'dart:developer';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:easychat/easychat.dart';
 import 'package:firebase_ui_firestore/firebase_ui_firestore.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 
-class ChatRoomListController {
-  late final ChatRoomListState state;
+class ChatRoomListViewController {
+  late final ChatRoomListViewState state;
+
+  ///
+  showChatRoom({required BuildContext context, UserModel? user, ChatRoomModel? room}) {
+    EasyChat.instance.showChatRoom(context: context, user: user, room: room);
+  }
 }
 
-/// Chat room list
-class ChatRoomList extends StatefulWidget {
-  const ChatRoomList({super.key, required this.controller});
+/// ChatRoomListView
+///
+/// It uses [FirestoreListView] to show the list of chat rooms which uses [ListView] internally.
+/// And it supports some(not all) of the ListView properties.
+///
+/// Note that, the controller of ListView is named [scrollController] in this class.
+class ChatRoomListView extends StatefulWidget {
+  const ChatRoomListView({
+    super.key,
+    required this.controller,
+    this.itemBuilder,
+    this.pageSize = 10,
+    this.scrollController,
+    this.primary,
+    this.physics,
+    this.shrinkWrap = false,
+    this.padding,
+    this.dragStartBehavior = DragStartBehavior.start,
+    this.keyboardDismissBehavior = ScrollViewKeyboardDismissBehavior.manual,
+    this.clipBehavior = Clip.hardEdge,
+  });
 
-  final ChatRoomListController controller;
+  final ChatRoomListViewController controller;
+  final int pageSize;
+  final Widget Function(BuildContext, ChatRoomModel)? itemBuilder;
+  final ScrollController? scrollController;
+  final bool? primary;
+  final ScrollPhysics? physics;
+  final bool shrinkWrap;
+  final EdgeInsetsGeometry? padding;
+
+  final DragStartBehavior dragStartBehavior;
+  final ScrollViewKeyboardDismissBehavior keyboardDismissBehavior;
+  final Clip clipBehavior;
 
   // final void Function(ChatRoomModel) onTap;
 
   @override
-  State<ChatRoomList> createState() => ChatRoomListState();
+  State<ChatRoomListView> createState() => ChatRoomListViewState();
 }
 
-class ChatRoomListState extends State<ChatRoomList> {
+class ChatRoomListViewState extends State<ChatRoomListView> {
   @override
   void initState() {
     super.initState();
@@ -30,77 +65,33 @@ class ChatRoomListState extends State<ChatRoomList> {
 
   @override
   Widget build(BuildContext context) {
+    if (EasyChat.instance.loggedIn == false) {
+      return const Center(child: Text('Error - Please, login first to use Easychat'));
+    }
     return FirestoreListView(
       query: EasyChat.instance.chatCol.where('users', arrayContains: EasyChat.instance.uid),
       itemBuilder: (context, QueryDocumentSnapshot snapshot) {
         final room = ChatRoomModel.fromDocumentSnapshot(snapshot);
-        return ListTile(
-            title: room.group
-                ? Text(room.name)
-                : FutureBuilder(
-                    builder: (_, snapshot) {
-                      if (snapshot.data == null) {
-                        return const SizedBox.shrink();
-                      }
-                      final user = snapshot.data as UserModel;
-                      return Text(user.displayName);
-                    },
-                    future: EasyChat.instance.getUser(room.otherUserUid)),
-            onTap: () => showChatRoom(room: room));
+        if (widget.itemBuilder != null) {
+          return widget.itemBuilder!(context, room);
+        } else {
+          return ChatRoomListTile(room: room);
+        }
       },
       errorBuilder: (context, error, stackTrace) {
         log(error.toString(), stackTrace: stackTrace);
         return const Center(child: Text('Error loading chat rooms'));
       },
+      pageSize: widget.pageSize,
+      controller: widget.scrollController,
+      primary: widget.primary,
+      physics: widget.physics,
+      shrinkWrap: widget.shrinkWrap,
+      padding: widget.padding,
+      dragStartBehavior: widget.dragStartBehavior,
+      keyboardDismissBehavior: widget.keyboardDismissBehavior,
+      clipBehavior: widget.clipBehavior,
     );
-  }
-
-  /// Open Chat Room
-  ///
-  /// When the user taps on a chat room, this method is called to open the chat room.
-  /// When the login user taps on a user NOT a chat room, then the user want to chat 1:1. That's why the user tap on the user.
-  /// In this case, search if there is a chat room the method checks if the 1:1 chat room exists or not.
-  showChatRoom({
-    ChatRoomModel? room,
-    UserModel? user,
-  }) async {
-    assert(room != null || user != null, "One of room or user must be not null");
-
-    // If it is 1:1 chat, get the chat room. (or create if it does not exist)
-    if (user != null) {
-      room = await EasyChat.instance.getOrCreateSingleChatRoom(user.uid);
-    }
-
-    if (mounted) {
-      showGeneralDialog(
-        context: context,
-        pageBuilder: (_, __, ___) {
-          return Scaffold(
-            appBar: ChatRoomAppBar(room: room!),
-            body: Column(
-              children: [
-                Expanded(
-                  child: ChatMessagesListView(
-                    room: room,
-                  ),
-                ),
-                SafeArea(
-                  child: Column(
-                    children: [
-                      const Divider(height: 0),
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: ChatRoomMessageBox(room: room),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          );
-        },
-      );
-    }
   }
 }
 

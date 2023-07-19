@@ -2,6 +2,32 @@
 
 * This package helps the flutter developers to rapidly build chat app.
 
+- [EasyChat](#easychat)
+- [TODO](#todo)
+- [Overview](#overview)
+  - [Principle of Design](#principle-of-design)
+  - [Features](#features)
+- [Environment](#environment)
+- [Features](#features-1)
+- [Setup](#setup)
+  - [Firebase Setup](#firebase-setup)
+    - [Firebase Users collection](#firebase-users-collection)
+    - [Firestore Security Rules](#firestore-security-rules)
+- [Widgets and Logics](#widgets-and-logics)
+  - [Create a chat room](#create-a-chat-room)
+  - [Additional information](#additional-information)
+  - [How to test \& UI work Chat room screen](#how-to-test--ui-work-chat-room-screen)
+- [Firebase](#firebase)
+  - [Security Rules](#security-rules)
+- [Logic](#logic)
+  - [Fields](#fields)
+    - [Chat room fields](#chat-room-fields)
+    - [Chat user field](#chat-user-field)
+  - [1:1 Chat and Multi user chat](#11-chat-and-multi-user-chat)
+- [UI Customization](#ui-customization)
+  - [Chat room list](#chat-room-list)
+- [Run the Security Rule Test](#run-the-security-rule-test)
+
 
 # TODO
 
@@ -223,6 +249,27 @@ Scafolld(
 
 
 
+# UI Customization
+
+## Chat room list
+
+```dart
+ChatRoomListView(
+  controller: controller,
+  itemBuilder: (context, room) {
+    return ListTile(
+        leading: const Icon(Icons.chat),
+        title: ChatRoomListTileName(
+          room: room,
+          style: const TextStyle(color: Colors.blue),
+        ),
+        trailing: const Icon(Icons.chevron_right),
+        onTap: () {
+          controller.showChatRoom(context: context, room: room);
+        });
+  },
+)
+```
 
 
 # Run the Security Rule Test
