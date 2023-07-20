@@ -220,7 +220,7 @@ class EasyChat {
     if (re == FileSource.gallery || re == FileSource.camera) {
       ImageSource imageSource = re == FileSource.gallery ? ImageSource.gallery : ImageSource.camera;
       onPressedPhotoOption(room: room, imageSource: imageSource);
-    } else if (re == FileSource.fileBrowser) {
+    } else if (re == FileSource.file) {
       onPressedChooseFileUploadOption(room: room);
     }
   }
@@ -243,7 +243,7 @@ class EasyChat {
     if (result == null) return;
     pickedFile = result.files.first;
     final file = File(pickedFile.path!);
-    final storageName = sanitizeFilename('${DateTime.now().microsecondsSinceEpoch}-${pickedFile.name}', replacement: '-');
+    final storageName = sanitizeFilename('${DateTime.now().millisecondsSinceEpoch}-${pickedFile.name}', replacement: '-');
     final fileName = sanitizeFilename(pickedFile.name, replacement: '-');
     onFileUpload(room: room, file: file, isImage: false, fileStorageName: storageName, fileName: fileName);
   }

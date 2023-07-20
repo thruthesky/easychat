@@ -7,5 +7,5 @@ enum FileSource {
   gallery,
 
   /// Opens up the File Picker
-  fileBrowser,
+  file,
 }

@@ -45,7 +45,7 @@ class _ChatRoomFileUploadBottomSheetState extends State<ChatRoomFileUploadBottom
                 trailing: const Icon(Icons.chevron_right),
                 onTap: () {
                   debugPrint('Choosing a file');
-                  Navigator.pop(context, FileSource.fileBrowser);
+                  Navigator.pop(context, FileSource.file);
                 },
               )
             ],
