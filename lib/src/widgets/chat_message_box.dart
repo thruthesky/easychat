@@ -23,13 +23,18 @@ class _ChatRoomMessageBoxState extends State<ChatRoomMessageBox> {
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [
           IconButton(
-            icon: const Icon(Icons.camera_alt),
-            onPressed: onFileUpload,
-          ),
+              icon: const Icon(Icons.camera_alt),
+              iconSize: 28,
+              onPressed: () {
+                EasyChat.instance.onPressedFileUploadIcon(context: context, room: widget.room);
+              }),
           Expanded(
             child: TextField(
               controller: message,
-              decoration: const InputDecoration(hintText: 'Message', border: InputBorder.none),
+              decoration: const InputDecoration(
+                hintText: 'Message',
+                border: InputBorder.none,
+              ),
               maxLines: 5,
               minLines: 1,
             ),
@@ -50,6 +55,4 @@ class _ChatRoomMessageBoxState extends State<ChatRoomMessageBox> {
       ),
     );
   }
-
-  onFileUpload() {}
 }

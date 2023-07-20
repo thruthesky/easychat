@@ -10,13 +10,13 @@ class ChatScreen extends StatefulWidget {
 }
 
 class _ChatScreenState extends State<ChatScreen> {
-  final ChatRoomListController controller = ChatRoomListController();
+  final ChatRoomListViewController controller = ChatRoomListViewController();
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       if (widget.user != null) {
-        controller.state.showChatRoom(user: widget.user);
+        controller.showChatRoom(context: context, user: widget.user);
       }
     });
   }
@@ -45,8 +45,20 @@ class _ChatScreenState extends State<ChatScreen> {
           ),
         ],
       ),
-      body: ChatRoomList(
+      body: ChatRoomListView(
         controller: controller,
+        // itemBuilder: (context, room) {
+        //   return ListTile(
+        //       leading: const Icon(Icons.chat),
+        //       title: ChatRoomListTileName(
+        //         room: room,
+        //         style: const TextStyle(color: Colors.blue),
+        //       ),
+        //       trailing: const Icon(Icons.chevron_right),
+        //       onTap: () {
+        //         controller.showChatRoom(context: context, room: room);
+        //       });
+        // },
       ),
     );
   }

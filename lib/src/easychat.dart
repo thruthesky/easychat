@@ -1,6 +1,11 @@
+import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:easychat/easychat.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 
 class EasyChat {
   // The instance of the EasyChat singleton.
@@ -11,6 +16,7 @@ class EasyChat {
   EasyChat._();
 
   String get uid => FirebaseAuth.instance.currentUser!.uid;
+  bool get loggedIn => FirebaseAuth.instance.currentUser != null;
 
   CollectionReference get chatCol => FirebaseFirestore.instance.collection('easychat');
   CollectionReference messageCol(String roomId) => chatCol.doc(roomId).collection('messages');
@@ -24,14 +30,18 @@ class EasyChat {
 
   final Map<String, UserModel> _userCache = {};
 
+  Function(BuildContext, ChatRoomModel)? onChatRoomFileUpload;
+
   initialize({
     required String usersCollection,
     required String displayNameField,
     required String photoUrlField,
+    Function(BuildContext, ChatRoomModel)? onChatRoomFileUpload,
   }) {
     this.usersCollection = usersCollection;
     this.displayNameField = displayNameField;
     this.photoUrlField = photoUrlField;
+    this.onChatRoomFileUpload = onChatRoomFileUpload;
   }
 
   /// Get user
@@ -113,10 +123,12 @@ class EasyChat {
 
   Future<void> sendMessage({
     required ChatRoomModel room,
-    required String text,
+    String? text,
+    String? imageUrl,
   }) async {
     await messageCol(room.id).add({
-      'text': text,
+      if (text != null) 'text': text,
+      if (imageUrl != null) 'imageUrl': imageUrl,
       'createdAt': FieldValue.serverTimestamp(),
       'senderUid': FirebaseAuth.instance.currentUser!.uid,
     });
@@ -128,5 +140,94 @@ class EasyChat {
   String getOtherUserUid(List<String> users) {
     final currentUserUid = FirebaseAuth.instance.currentUser!.uid;
     return users.firstWhere((uid) => uid != currentUserUid);
+  }
+
+  /// Open Chat Room
+  ///
+  /// When the user taps on a chat room, this method is called to open the chat room.
+  /// When the login user taps on a user NOT a chat room, then the user want to chat 1:1. That's why the user tap on the user.
+  /// In this case, search if there is a chat room the method checks if the 1:1 chat room exists or not.
+  showChatRoom({
+    required BuildContext context,
+    ChatRoomModel? room,
+    UserModel? user,
+  }) async {
+    assert(room != null || user != null, "One of room or user must be not null");
+
+    // If it is 1:1 chat, get the chat room. (or create if it does not exist)
+    if (user != null) {
+      room = await EasyChat.instance.getOrCreateSingleChatRoom(user.uid);
+    }
+
+    if (context.mounted) {
+      showGeneralDialog(
+        context: context,
+        pageBuilder: (_, __, ___) {
+          return Scaffold(
+            appBar: ChatRoomAppBar(room: room!),
+            body: Column(
+              children: [
+                Expanded(
+                  child: ChatMessagesListView(
+                    room: room,
+                  ),
+                ),
+                SafeArea(
+                  child: Column(
+                    children: [
+                      const Divider(height: 0),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: ChatRoomMessageBox(room: room),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          );
+        },
+      );
+    }
+  }
+
+  /// File upload
+  ///
+  /// This method is invoked when user press button to upload a file.
+  onPressedFileUploadIcon({required BuildContext context, required ChatRoomModel room}) async {
+    if (onChatRoomFileUpload != null) {
+      await onChatRoomFileUpload!(context, room);
+      return;
+    }
+    final re =
+        await showModalBottomSheet<ImageSource>(context: context, builder: (_) => ChatRoomFileUploadBottomSheet(room: room));
+// print('re; $re');
+    if (re == null) return; // double check
+    final ImagePicker picker = ImagePicker();
+
+// TODO support video later
+    final XFile? image = await picker.pickImage(source: re);
+    if (image == null) {
+      print('image is null after pickImage()');
+      return;
+    }
+
+    final name = sanitizeFilename(image.name, replacement: '-');
+
+    final storageRef = FirebaseStorage.instance.ref();
+// Create a child reference
+// imagesRef now points to "images"
+    final imagesRef = storageRef.child("easychat/${EasyChat.instance.uid}/$name");
+
+// TODO compress image, adjust the portrait/landscape, etc.
+    try {
+      await imagesRef.putFile(File(image.path));
+      final url = await imagesRef.getDownloadURL();
+      EasyChat.instance.sendMessage(room: room, imageUrl: url);
+    } on FirebaseException catch (e) {
+      // TODO provide a way of displaying error emssage nicley
+
+      print(e);
+    }
   }
 }

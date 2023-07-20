@@ -2,7 +2,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 class ChatMessageModel {
   final String id;
-  final String text;
+  final String? text;
+  final String? imageUrl;
   final String senderUid;
   final Timestamp? createdAt;
   final String? photoUrl;
@@ -10,6 +11,7 @@ class ChatMessageModel {
   ChatMessageModel({
     required this.id,
     required this.text,
+    required this.imageUrl,
     required this.senderUid,
     required this.createdAt,
     required this.photoUrl,
@@ -23,6 +25,7 @@ class ChatMessageModel {
     return ChatMessageModel(
       id: id,
       text: map['text'],
+      imageUrl: map['imageUrl'],
       senderUid: map['senderUid'],
       createdAt: map['createdAt'],
       photoUrl: map['photoUrl'],

@@ -5,10 +5,10 @@ import 'package:firebase_auth/firebase_auth.dart';
 class ChatMessageBubble extends StatefulWidget {
   const ChatMessageBubble({
     super.key,
-    required this.chatMessageDoc,
+    required this.chatMessage,
   });
 
-  final ChatMessageModel chatMessageDoc;
+  final ChatMessageModel chatMessage;
 
   @override
   State<ChatMessageBubble> createState() => _ChatMessageBubbleState();
@@ -18,7 +18,7 @@ class _ChatMessageBubbleState extends State<ChatMessageBubble> {
   bool _showDateTime = false;
   @override
   Widget build(BuildContext context) {
-    final isMyMessage = widget.chatMessageDoc.senderUid == FirebaseAuth.instance.currentUser!.uid;
+    final isMyMessage = widget.chatMessage.senderUid == FirebaseAuth.instance.currentUser!.uid;
     late final MainAxisAlignment bubbleMainAxisAlignment;
     late final CrossAxisAlignment bubbleCrossAxisAlignment;
     late final Color colorOfBubble;
@@ -46,7 +46,7 @@ class _ChatMessageBubbleState extends State<ChatMessageBubble> {
       bubbleCrossAxisAlignment = CrossAxisAlignment.start;
       borderRadiusOfBubble = borderRadiusOfBubbleOfOtherUser;
     }
-    final user = EasyChat.instance.getUser(widget.chatMessageDoc.senderUid);
+    final user = EasyChat.instance.getUser(widget.chatMessage.senderUid);
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisAlignment: bubbleMainAxisAlignment,
@@ -109,32 +109,33 @@ class _ChatMessageBubbleState extends State<ChatMessageBubble> {
                     ],
                   ],
                 ),
-                GestureDetector(
-                  onTap: () {
-                    setState(() {
-                      _showDateTime = !_showDateTime;
-                    });
-                  },
-                  child: Container(
-                    decoration: BoxDecoration(
-                      color: colorOfBubble,
-                      borderRadius: borderRadiusOfBubble,
-                    ),
-                    child: Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(widget.chatMessageDoc.text),
-                        ],
+                if (widget.chatMessage.text != null)
+                  GestureDetector(
+                    onTap: () {
+                      setState(() {
+                        _showDateTime = !_showDateTime;
+                      });
+                    },
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: colorOfBubble,
+                        borderRadius: borderRadiusOfBubble,
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(widget.chatMessage.text!),
+                          ],
+                        ),
                       ),
                     ),
                   ),
-                ),
+                if (widget.chatMessage.imageUrl != null) Image.network(widget.chatMessage.imageUrl!),
                 Visibility(
                   visible: _showDateTime,
-                  child:
-                      Text(widget.chatMessageDoc.createdAt != null ? toAgoDate(widget.chatMessageDoc.createdAt!.toDate()) : ''),
+                  child: Text(widget.chatMessage.createdAt != null ? toAgoDate(widget.chatMessage.createdAt!.toDate()) : ''),
                 )
               ],
             ),

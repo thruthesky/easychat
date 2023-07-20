@@ -22,7 +22,7 @@ class _ChatMessagesViewState extends State<ChatMessagesListView> {
         reverse: true,
         query: query,
         itemBuilder: (BuildContext context, QueryDocumentSnapshot<dynamic> doc) {
-          return ChatMessageBubble(chatMessageDoc: ChatMessageModel.fromDocumentSnapshot(doc));
+          return ChatMessageBubble(chatMessage: ChatMessageModel.fromDocumentSnapshot(doc));
         },
         errorBuilder: (context, error, stackTrace) {
           debugPrint(error.toString());
