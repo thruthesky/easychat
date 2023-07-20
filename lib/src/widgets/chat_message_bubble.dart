@@ -15,10 +15,10 @@ class ChatMessageBubble extends StatefulWidget {
 }
 
 class _ChatMessageBubbleState extends State<ChatMessageBubble> {
+  bool _showDateTime = false;
   @override
   Widget build(BuildContext context) {
     final isMyMessage = widget.chatMessageDoc.senderUid == FirebaseAuth.instance.currentUser!.uid;
-    bool showDateTime = false;
     late final MainAxisAlignment bubbleMainAxisAlignment;
     late final CrossAxisAlignment bubbleCrossAxisAlignment;
     late final Color colorOfBubble;
@@ -56,7 +56,12 @@ class _ChatMessageBubbleState extends State<ChatMessageBubble> {
             future: user,
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
-                return const Text('Loading...');
+                return const Padding(
+                  padding: EdgeInsets.only(top: 8.0),
+                  child: CircleAvatar(
+                    backgroundColor: Colors.black26,
+                  ),
+                );
               }
               if (snapshot.hasData == false) {
                 return const Text('Error - no user');
@@ -90,12 +95,8 @@ class _ChatMessageBubbleState extends State<ChatMessageBubble> {
                       FutureBuilder(
                         future: user,
                         builder: (context, snapshot) {
-                          if (snapshot.connectionState == ConnectionState.waiting) {
-                            return const Text('Loading...');
-                          }
-                          if (snapshot.hasData == false) {
-                            return const Text('Error - no user');
-                          }
+                          if (snapshot.connectionState == ConnectionState.waiting) return const Text('');
+                          if (snapshot.hasData == false) return const Text('');
                           final user = snapshot.data as UserModel;
                           return user.photoUrl.isEmpty
                               ? const SizedBox()
@@ -111,7 +112,7 @@ class _ChatMessageBubbleState extends State<ChatMessageBubble> {
                 GestureDetector(
                   onTap: () {
                     setState(() {
-                      showDateTime = !showDateTime;
+                      _showDateTime = !_showDateTime;
                     });
                   },
                   child: Container(
@@ -131,7 +132,7 @@ class _ChatMessageBubbleState extends State<ChatMessageBubble> {
                   ),
                 ),
                 Visibility(
-                  visible: showDateTime,
+                  visible: _showDateTime,
                   child:
                       Text(widget.chatMessageDoc.createdAt != null ? toAgoDate(widget.chatMessageDoc.createdAt!.toDate()) : ''),
                 )
@@ -145,14 +146,16 @@ class _ChatMessageBubbleState extends State<ChatMessageBubble> {
 
   toAgoDate(DateTime date) {
     Duration diff = DateTime.now().difference(date);
-    if (diff.inDays >= 1) {
-      return '${diff.inDays} day(s) ago';
+    if (diff.inDays >= 2) {
+      return date.toIso8601String();
+    } else if (diff.inDays >= 1) {
+      return '${diff.inDays} ${diff.inDays == 1 ? "day" : "days"} ago';
     } else if (diff.inHours >= 1) {
-      return '${diff.inHours} hour(s) ago';
+      return '${diff.inHours} ${diff.inHours == 1 ? "hour" : "hours"} ago';
     } else if (diff.inMinutes >= 1) {
-      return '${diff.inMinutes} minute(s) ago';
+      return '${diff.inMinutes} ${diff.inMinutes == 1 ? "minute" : "minutes"} ago';
     } else if (diff.inSeconds >= 1) {
-      return '${diff.inSeconds} second(s) ago';
+      return '${diff.inSeconds} ${diff.inSeconds == 1 ? "second" : "seconds"} ago';
     } else {
       return 'Just Now';
     }
