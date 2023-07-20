@@ -1,4 +1,5 @@
 import 'package:easychat/easychat.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
@@ -15,7 +16,7 @@ class _ChatRoomFileUploadBottomSheetState extends State<ChatRoomFileUploadBottom
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 200,
+      height: 300,
       color: Theme.of(context).canvasColor,
       child: Center(
         child: SafeArea(
@@ -29,7 +30,7 @@ class _ChatRoomFileUploadBottomSheetState extends State<ChatRoomFileUploadBottom
                 title: const Text('Photo gallery'),
                 trailing: const Icon(Icons.chevron_right),
                 onTap: () {
-                  Navigator.pop(context, ImageSource.gallery);
+                  Navigator.pop(context, FileSource.gallery);
                 },
               ),
               ListTile(
@@ -37,7 +38,16 @@ class _ChatRoomFileUploadBottomSheetState extends State<ChatRoomFileUploadBottom
                 title: const Text('Camera'),
                 trailing: const Icon(Icons.chevron_right),
                 onTap: () {
-                  Navigator.pop(context, ImageSource.camera);
+                  Navigator.pop(context, FileSource.camera);
+                },
+              ),
+              ListTile(
+                leading: const Icon(Icons.file_upload),
+                title: const Text('Choose File'),
+                trailing: const Icon(Icons.chevron_right),
+                onTap: () {
+                  debugPrint('Choosing a file');
+                  Navigator.pop(context, FileSource.fileBrowser);
                 },
               )
             ],

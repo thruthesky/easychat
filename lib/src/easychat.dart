@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:easychat/easychat.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
@@ -125,10 +126,14 @@ class EasyChat {
     required ChatRoomModel room,
     String? text,
     String? imageUrl,
+    String? fileUrl,
+    String? fileName,
   }) async {
     await messageCol(room.id).add({
       if (text != null) 'text': text,
       if (imageUrl != null) 'imageUrl': imageUrl,
+      if (fileUrl != null) 'fileUrl': fileUrl,
+      if (fileName != null) 'fileName': fileName,
       'createdAt': FieldValue.serverTimestamp(),
       'senderUid': FirebaseAuth.instance.currentUser!.uid,
     });
@@ -199,34 +204,63 @@ class EasyChat {
       await onChatRoomFileUpload!(context, room);
       return;
     }
-    final re =
-        await showModalBottomSheet<ImageSource>(context: context, builder: (_) => ChatRoomFileUploadBottomSheet(room: room));
-// print('re; $re');
+    final re = await showModalBottomSheet<FileSource>(
+        context: context,
+        builder: (_) => ChatRoomFileUploadBottomSheet(
+            room: room)); // For confirmation () removed Image source because we dont have FileSource
     if (re == null) return; // double check
-    final ImagePicker picker = ImagePicker();
 
-// TODO support video later
-    final XFile? image = await picker.pickImage(source: re);
+    debugPrint("re: $re");
+
+    if (re == FileSource.gallery || re == FileSource.camera) {
+      ImageSource imageSource = re == FileSource.gallery ? ImageSource.gallery : ImageSource.camera;
+      onPressedPhotoOption(room: room, imageSource: imageSource);
+    } else if (re == FileSource.fileBrowser) {
+      onPressedChooseFileUploadOption(room: room);
+    }
+  }
+
+  onPressedPhotoOption({required ChatRoomModel room, required ImageSource imageSource}) async {
+    final ImagePicker picker = ImagePicker();
+    final XFile? image = await picker.pickImage(source: imageSource);
     if (image == null) {
-      print('image is null after pickImage()');
       return;
     }
 
+    final file = File(image.path);
     final name = sanitizeFilename(image.name, replacement: '-');
+    onFileUpload(room: room, file: file, isImage: true, fileStorageName: name);
+  }
 
+  onPressedChooseFileUploadOption({required ChatRoomModel room}) async {
+    late PlatformFile pickedFile;
+    final FilePickerResult? result = await FilePicker.platform.pickFiles();
+    if (result == null) return;
+    pickedFile = result.files.first;
+    final file = File(pickedFile.path!);
+    final storageName = sanitizeFilename('${DateTime.now().microsecondsSinceEpoch}-${pickedFile.name}', replacement: '-');
+    final fileName = sanitizeFilename(pickedFile.name, replacement: '-');
+    onFileUpload(room: room, file: file, isImage: false, fileStorageName: storageName, fileName: fileName);
+  }
+
+  onFileUpload({
+    required ChatRoomModel room,
+    required File file,
+    bool isImage = true,
+    // TODO ask if we need to have a plugin or a simple way to check what type of file
+    String? fileName,
+    String? fileStorageName,
+  }) async {
     final storageRef = FirebaseStorage.instance.ref();
-// Create a child reference
-// imagesRef now points to "images"
-    final imagesRef = storageRef.child("easychat/${EasyChat.instance.uid}/$name");
-
-// TODO compress image, adjust the portrait/landscape, etc.
+    final fileRef = storageRef.child("easychat/${EasyChat.instance.uid}/$fileStorageName");
     try {
-      await imagesRef.putFile(File(image.path));
-      final url = await imagesRef.getDownloadURL();
-      EasyChat.instance.sendMessage(room: room, imageUrl: url);
+      await fileRef.putFile(file);
+      final url = await fileRef.getDownloadURL();
+      isImage
+          ? EasyChat.instance.sendMessage(room: room, imageUrl: url)
+          : EasyChat.instance.sendMessage(room: room, fileUrl: url, fileName: fileName);
     } on FirebaseException catch (e) {
       // TODO provide a way of displaying error emssage nicley
-
       print(e);
     }
   }

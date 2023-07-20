@@ -111,7 +111,7 @@ class _ChatMessageBubbleState extends State<ChatMessageBubble> {
                 ),
                 if (widget.chatMessage.text != null)
                   GestureDetector(
-                    onTap: () {
+                    onDoubleTap: () {
                       setState(() {
                         _showDateTime = !_showDateTime;
                       });
@@ -127,6 +127,42 @@ class _ChatMessageBubbleState extends State<ChatMessageBubble> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(widget.chatMessage.text!),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                if (widget.chatMessage.fileUrl != null)
+                  GestureDetector(
+                    onDoubleTap: () {
+                      setState(() {
+                        _showDateTime = !_showDateTime;
+                      });
+                    },
+                    onTap: () {
+                      debugPrint('Download File');
+                      debugPrint('TODO: Ask about the right plugin');
+                    },
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: colorOfBubble,
+                        borderRadius: borderRadiusOfBubble,
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            const Padding(
+                              padding: EdgeInsets.only(right: 8.0),
+                              child: Icon(Icons.file_download),
+                            ),
+                            Flexible(
+                              child: Text(
+                                widget.chatMessage.fileName ?? widget.chatMessage.fileUrl ?? 'File Attachment',
+                                style: const TextStyle(decoration: TextDecoration.underline),
+                              ),
+                            ),
                           ],
                         ),
                       ),

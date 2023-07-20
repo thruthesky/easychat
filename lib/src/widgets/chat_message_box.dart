@@ -23,8 +23,11 @@ class _ChatRoomMessageBoxState extends State<ChatRoomMessageBox> {
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [
           IconButton(
-              icon: const Icon(Icons.camera_alt),
-              iconSize: 28,
+              icon: const Icon(
+                Icons.camera_alt,
+                size: 28,
+              ),
+              padding: EdgeInsets.zero,
               onPressed: () {
                 EasyChat.instance.onPressedFileUploadIcon(context: context, room: widget.room);
               }),

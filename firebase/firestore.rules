@@ -28,6 +28,15 @@ service cloud.firestore {
       function isRoomNotExist() {
         return resource == null;
       }
+      function isOpen() {
+        return 'open' in resource.data && resource.data.open;
+      }
+      function isGroupChat() {
+        return 'group' in resource.data && resource.data.group;
+      }
+      function isModifyingUsers() {
+        return 'users' in request.resource.data;
+      }
       
       // function isOpen() {
       //   return 'open' in roomData() && roomData().open;
@@ -51,7 +60,18 @@ service cloud.firestore {
         // The master uid must be the creator.
         request.resource.data.master == request.auth.uid;
       
-      allow update: if isMaster() || isModerator();
+      allow update: if
+        isModifyingUsers() // should only check for modifying users in a chat room
+        &&
+        isGroupChat() // it should be a group chat to add
+        &&
+        (
+          isMaster() // Master and Moderator can invite in group chat regardless if open/closed
+          ||
+          isModerator()
+          ||
+          (isOpen() && isRoomUser()) // a room user can only invite if the group chat is open
+        );
       allow delete: if false;
 
 

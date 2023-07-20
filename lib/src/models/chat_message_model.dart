@@ -6,7 +6,8 @@ class ChatMessageModel {
   final String? imageUrl;
   final String senderUid;
   final Timestamp? createdAt;
-  final String? photoUrl;
+  final String? fileUrl;
+  final String? fileName;
 
   ChatMessageModel({
     required this.id,
@@ -14,7 +15,8 @@ class ChatMessageModel {
     required this.imageUrl,
     required this.senderUid,
     required this.createdAt,
-    required this.photoUrl,
+    required this.fileUrl,
+    required this.fileName,
   });
 
   factory ChatMessageModel.fromDocumentSnapshot(DocumentSnapshot documentSnapshot) {
@@ -28,7 +30,8 @@ class ChatMessageModel {
       imageUrl: map['imageUrl'],
       senderUid: map['senderUid'],
       createdAt: map['createdAt'],
-      photoUrl: map['photoUrl'],
+      fileUrl: map['fileUrl'],
+      fileName: map['fileName'],
     );
   }
 
@@ -36,12 +39,14 @@ class ChatMessageModel {
     return {
       'id': id,
       'text': text,
+      'imageUrl': imageUrl,
       'senderUid': senderUid,
       'createdAt': createdAt,
-      'photoUrl': photoUrl,
+      'fileUrl': fileUrl,
+      'fileName': fileName,
     };
   }
 
   @override
-  String toString() => 'ChatMessageModel(id: $id, text: $text)';
+  String toString() => 'ChatMessageModel(id: $id, text: $text)'; // TODO
 }
