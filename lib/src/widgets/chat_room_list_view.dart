@@ -136,40 +136,27 @@ class ChatRoomMenuButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return IconButton(
       icon: const Icon(Icons.menu),
-      onPressed: () {
-        showDialog(
-          context: context,
-          builder: (context) {
-            return AlertDialog(
-              title: const Text('Group Chat Menu'),
-              content: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  TextButton(
-                    child: const Text('View Members'),
-                    onPressed: () {
-                      showGeneralDialog(
-                        context: context,
-                        pageBuilder: (_, __, ___) {
-                          return Scaffold(
-                            appBar: AppBar(
-                              title: const Text('Members'),
-                            ),
-                            body: const Text('Members'),
-                          );
-                        },
-                      );
-                    },
+      onPressed: () async {
+        final otherUser = await EasyChat.instance.getOtherUserFromSingleChatRoom(room);
+        if (context.mounted) {
+          showGeneralDialog(
+              context: context,
+              pageBuilder: (context, _, __) {
+                return Scaffold(
+                  appBar: AppBar(),
+                  body: SingleChildScrollView(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        if (room.group) ...[Text(room.name)],
+                        if (!room.group) ...[Text(otherUser!.displayName)],
+                      ],
+                    ),
                   ),
-                  TextButton(
-                    child: const Text('Change Chat Room Name'),
-                    onPressed: () {},
-                  ),
-                ],
-              ),
-            );
-          },
-        );
+                );
+              });
+        }
       },
     );
   }

@@ -147,6 +147,11 @@ class EasyChat {
     return users.firstWhere((uid) => uid != currentUserUid);
   }
 
+  Future<UserModel?> getOtherUserFromSingleChatRoom(ChatRoomModel room) async {
+    final otherUserUid = getOtherUserUid(room.users);
+    return await getUser(otherUserUid);
+  }
+
   /// Open Chat Room
   ///
   /// When the user taps on a chat room, this method is called to open the chat room.
