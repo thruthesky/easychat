@@ -1,6 +1,7 @@
 import 'package:easychat/easychat.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class ChatMessageBubble extends StatefulWidget {
   const ChatMessageBubble({
@@ -140,8 +141,8 @@ class _ChatMessageBubbleState extends State<ChatMessageBubble> {
                       });
                     },
                     onTap: () {
-                      debugPrint('Download File');
-                      debugPrint('TODO: Ask about the right plugin');
+                      debugPrint('launching ${widget.chatMessage.fileUrl}');
+                      launchUrl(Uri.parse(widget.chatMessage.fileUrl!));
                     },
                     child: Container(
                       decoration: BoxDecoration(
