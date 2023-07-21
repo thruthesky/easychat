@@ -169,7 +169,7 @@ function notUpdating(fields) {
 //
 // Usage: notRemoving('users', resource.data.master) - for blocking moderator to remove master.
 function notRemoving(field, element) {
-  return onlyUpdating([field]) && request.resource.data[field].hasAny([element]);
+  return request.resource.data[field].hasAny([element]);
 }
 
 // Return true if master field is not updated.
