@@ -54,20 +54,20 @@ service cloud.firestore {
           (willBeGroupChat() && usersSize() == 1) // if it's a group, there must have only one member
         )
         &&
-        // The master uid must always be in the users field.
+        // The master uid must exists in the users field.
         request.resource.data.users.hasAny([request.resource.data.master])
         &&
         // The master uid must be the creator.
         request.resource.data.master == request.auth.uid;
       
       allow update: if
-       ( isMaster() && notRemovingMaster() )
-       ||
-       ( isModerator() && notChangingMaster() && notRemovingMaster() )
-       ||
-       isLeaving()
-       ||
-      ( isRoomUser() && onlyUpdating(['lastMessage']) )
+        ( isMaster() && notRemovingMaster() )
+        ||
+        ( isModerator() && notUpdatingMaster() && notRemovingMaster() )
+        ||
+        isLeaving()
+        ||
+        ( isRoomUser() && onlyUpdating(['lastMessage']) )
       ;
 
 
@@ -118,6 +118,10 @@ service cloud.firestore {
     match /rule-test-notUpdating/{documentId} {
       allow read: if true;
       allow update: if notUpdating(['a', 'b']);
+    }
+    match /rule-test-onlyRemoving/{documentId} {
+      allow read: if true;
+      allow update: if onlyRemoving('users', 'b');
     }
 
   }
@@ -175,11 +179,15 @@ function notRemoving(field, element) {
 // arrayField is an array
 // [element] is an element to be removed from the arrayField
 function onlyRemoving(arryField, element) {
-  return request.resource.data[arryField].diff(resource.data[arryField]).affectedKeys().hasOnly([element]);
+  return
+    resource.data[arryField].toSet().difference(request.resource.data[arryField].toSet()) == [element].toSet() 
+    &&
+    resource.data[arryField].toSet().intersection(request.resource.data[arryField].toSet()) == request.resource.data[arryField].toSet()
+  ;
 }
 
 // Return true if master field is not updated.
-function notChangingMaster() {
+function notUpdatingMaster() {
   return notUpdating(['master']);
 }
 
@@ -191,11 +199,7 @@ function notRemovingMaster() {
 }
 
 
-
 // Return true if the user is removing himself from the room.
 function isLeaving() {
   return onlyRemoving('users', request.auth.uid);
-  // return  request.resource.data.users.hasAll(
-  //         resource.data.users.removeAll([request.auth.uid])
-  //       );
 }
