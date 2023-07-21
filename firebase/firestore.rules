@@ -112,6 +112,11 @@ service cloud.firestore {
       allow read, write: if true;
     }
 
+    match /test/{documentId} {
+      allow read: if true;
+      allow update: if onlyUpdating(['a', 'b']);
+    }
+
   }
 
 
@@ -144,7 +149,7 @@ function usersSize() {
 // For instance, the input fields are ['A', 'B'] and if the document is updated with ['A', 'C'], then it return true.
 // For instance, the input fields are ['A', 'B'] and if the document is updated with ['C', 'D'], then it return false.
 function onlyUpdating(fields) {
-  return request.resource.data.diff(resource.data).affectedKeys().hasAny(fields);
+  return request.resource.data.diff(resource.data).affectedKeys().hasOnly(fields);
 }
 
 // Not updating a field.
@@ -177,7 +182,7 @@ function notRemovingMaster() {
 // Return true if the user is removing himself from the room.
 function leavingMyself() {
 
-return        request.resource.data.users.hasAll(
+  return  request.resource.data.users.hasAll(
           resource.data.users.removeAll([request.auth.uid])
         );
 }
