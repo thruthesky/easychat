@@ -112,9 +112,14 @@ service cloud.firestore {
       allow read, write: if true;
     }
 
-    match /test/{documentId} {
+    match /rule-test-onlyUpdating/{documentId} {
       allow read: if true;
       allow update: if onlyUpdating(['a', 'b']);
+    }
+
+    match /rule-test-notUpdating/{documentId} {
+      allow read: if true;
+      allow update: if notUpdating(['a', 'b']);
     }
 
   }
@@ -152,10 +157,12 @@ function onlyUpdating(fields) {
   return request.resource.data.diff(resource.data).affectedKeys().hasOnly(fields);
 }
 
-// Not updating a field.
-// It can update other fields.
+// 입력된 fields 중 하나라도 업데이트 되면 false. 즉, 업데이트 안되어야 성공.
+// 예) 기존: {a: 1, b: 2, c: 3}, 업데이트: {a: 10, b: 20} 인 경우, a 와 b 필드가 업데이트된다.
+// 이 때, 입력 필드 fields 가 ['a', 'c'] 인 경우,
+// a 와 c 필드가 업데이트 되지 않기를 원하는데, 실제로는 b 가 업데이트 되었다. 그래서, false 리턴
 function notUpdating(fields) {
-  return !onlyUpdating(fields);
+  return !request.resource.data.diff(resource.data).affectedKeys().hasAny(fields);
 }
 
 // Return true if the array field in the document is not removing the element.
