@@ -65,13 +65,11 @@ service cloud.firestore {
        ||
        ( isModerator() && notChangingMaster() && notRemovingMaster() )
        ||
-       leavingMyself()
+       isLeaving()
        ||
       ( isRoomUser() && onlyUpdating(['lastMessage']) )
       ;
 
-
-//
 
 
 
@@ -172,6 +170,14 @@ function notRemoving(field, element) {
   return request.resource.data[field].hasAny([element]);
 }
 
+// Return true if the array field in the document is removing only the the element. It must maintain other elements.
+//
+// arrayField is an array
+// [element] is an element to be removed from the arrayField
+function onlyRemoving(arryField, element) {
+  return request.resource.data[arryField].diff(resource.data[arryField]).affectedKeys().hasOnly([element]);
+}
+
 // Return true if master field is not updated.
 function notChangingMaster() {
   return notUpdating(['master']);
@@ -187,9 +193,9 @@ function notRemovingMaster() {
 
 
 // Return true if the user is removing himself from the room.
-function leavingMyself() {
-
-  return  request.resource.data.users.hasAll(
-          resource.data.users.removeAll([request.auth.uid])
-        );
+function isLeaving() {
+  return onlyRemoving('users', request.auth.uid);
+  // return  request.resource.data.users.hasAll(
+  //         resource.data.users.removeAll([request.auth.uid])
+  //       );
 }
