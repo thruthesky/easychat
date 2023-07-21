@@ -25,31 +25,27 @@ service cloud.firestore {
       function isRoomUser() {
         return resource.data.users.hasAny([request.auth.uid]);
       }
-      function isRoomNotExist() {
-        return resource == null;
-      }
       function isOpen() {
         return 'open' in resource.data && resource.data.open;
       }
-      function isGroupChat() {
-        return 'group' in resource.data && resource.data.group;
-      }
-      function isModifyingUsers() {
-        return 'users' in request.resource.data;
-      }
-      function isModifyingModerators() {
-        return 'moderators' in request.resource.data;
-      }
-      function isRemovalOfUserInChatRoom() {
-        return request.resource.data.users.size() == resource.data.users.size() - 1
-      }
-      function isKickingOutAMaster() {
-        return !request.resource.data.users.hasAny([resource.data.master]);
-      }
+      // function isGroupChat() {
+      //   return 'group' in resource.data && resource.data.group;
+      // }
+      // function isModifyingUsers() {
+      //   return 'users' in request.resource.data;
+      // }
+      // function isModifyingModerators() {
+      //   return 'moderators' in request.resource.data;
+      // }
+      // function isRemovalOfUserInChatRoom() {
+      //   return request.resource.data.users.size() == resource.data.users.size() - 1
+      // }
+      // function isKickingOutAMaster() {
+      //   return !request.resource.data.users.hasAny([resource.data.master]);
+      // }
 
-      allow read: if isOpen() || isRoomUser() || isRoomNotExist();
-      allow create: if 
-        // all rooms must have these fields.
+      allow read: if isOpen() || isRoomUser();
+      allow create: if
         required(['master', 'createdAt', 'group', 'open', 'users'])
         &&
         (
@@ -65,48 +61,28 @@ service cloud.firestore {
         request.resource.data.master == request.auth.uid;
       
       allow update: if
-        (
-          isModifyingUsers() // should only check for modifying users in a chat room
-          &&
-          isGroupChat() // it should be a group chat to add
-          &&
-          (
-            isMaster() // Master and Moderator can invite in group chat regardless if open/closed
-            ||
-            isModerator()
-            ||
-            (isOpen() && isRoomUser()) // a room user can only invite if the group chat is open
-          )
-        )
-        ||
-        (
-          isModifyingModerators() // should only check for modifying users in a chat room
-          &&
-          isGroupChat() // it should be a group chat to add
-          &&
-          (
-            isMaster() // based on notes, only mentioned that master can set moderators.
-            && 
-            isRoomUser()
-          ) 
-        )
-        ||
-        (
-          isRemovalOfUserInChatRoom()
-          &&
-          isGroupChat() // it should be a group chat to remove
-          &&
-          (
-            isMaster()
-            ||
-            (
-              isModerator() // master and moderators can only kickout
-              &&
-              !isKickingOutAMaster()
-            )
-          )
-        )
-        ;
+       ( isMaster() && notRemovingMaster() )
+       ||
+       ( isModerator() && notChangingMaster() && notRemovingMaster() )
+       ||
+       leavingMyself()
+       ||
+      ( isRoomUser() && onlyUpdating(['lastMessage']) )
+      ;
+
+
+
+
+
+
+
+      // For room users, they can invite any users if it's open chat. He can join any group chat if it's open.
+      // For room users, they can remove themselves from the room.
+      // ( isRoomUser() && onlyUpdating(['lastMessage']) )
+      // || (isRoomUser() && isOpenChat() && isAddingOtherUser())
+      // || (isRoomUser() && isRemovingHimSelf())
+
+        // ;
       allow delete: if false;
 
 
@@ -161,4 +137,47 @@ function willBeSingleChat() {
 // ! After save
 function usersSize() {
   return request.resource.data.users.toSet().size();
+}
+
+// Returns true if the fields are updated in the document.
+//
+// For instance, the input fields are ['A', 'B'] and if the document is updated with ['A', 'C'], then it return true.
+// For instance, the input fields are ['A', 'B'] and if the document is updated with ['C', 'D'], then it return false.
+function onlyUpdating(fields) {
+  return request.resource.data.diff(resource.data).affectedKeys().hasAny(fields);
+}
+
+// Not updating a field.
+// It can update other fields.
+function notUpdating(fields) {
+  return !onlyUpdating(fields);
+}
+
+// Return true if the array field in the document is not removing the element.
+//
+// Usage: notRemoving('users', resource.data.master) - for blocking moderator to remove master.
+function notRemoving(field, element) {
+  return onlyUpdating([field]) && request.resource.data[field].hasAny([element]);
+}
+
+// Return true if master field is not updated.
+function notChangingMaster() {
+  return notUpdating(['master']);
+}
+
+// Return true
+// - if the master is not leaving(removing) from the room.
+// - if the user does not remove the master from the room.
+function notRemovingMaster() {
+  return notRemoving('users', resource.data.master);
+}
+
+
+
+// Return true if the user is removing himself from the room.
+function leavingMyself() {
+
+return        request.resource.data.users.hasAll(
+          resource.data.users.removeAll([request.auth.uid])
+        );
 }
