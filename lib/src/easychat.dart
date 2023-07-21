@@ -122,6 +122,18 @@ class EasyChat {
     return ChatRoomModel.fromMap(map: roomData, id: roomId);
   }
 
+  Future<void> inviteUser({required ChatRoomModel room, required UserModel user}) async {
+    await roomDoc(room.id).update({
+      'users': FieldValue.arrayUnion([user.uid])
+    });
+  }
+
+  Future<void> joinRoom({required ChatRoomModel room}) async {
+    await roomDoc(room.id).update({
+      'users': FieldValue.arrayUnion([uid])
+    });
+  }
+
   Future<void> sendMessage({
     required ChatRoomModel room,
     String? text,

@@ -40,13 +40,14 @@ service cloud.firestore {
       function isModifyingModerators() {
         return 'moderators' in request.resource.data;
       }
-      
-      // function isOpen() {
-      //   return 'open' in roomData() && roomData().open;
-      // }
+      function isRemovalOfUserInChatRoom() {
+        return request.resource.data.users.size() == resource.data.users.size() - 1
+      }
+      function isKickingOutAMaster() {
+        return !request.resource.data.users.hasAny([resource.data.master]);
+      }
 
-
-      allow read: if isRoomUser() || isRoomNotExist();
+      allow read: if isOpen() || isRoomUser() || isRoomNotExist();
       allow create: if 
         // all rooms must have these fields.
         required(['master', 'createdAt', 'group', 'open', 'users'])
@@ -88,7 +89,24 @@ service cloud.firestore {
             && 
             isRoomUser()
           ) 
-        );
+        )
+        ||
+        (
+          isRemovalOfUserInChatRoom()
+          &&
+          isGroupChat() // it should be a group chat to remove
+          &&
+          (
+            isMaster()
+            ||
+            (
+              isModerator() // master and moderators can only kickout
+              &&
+              !isKickingOutAMaster()
+            )
+          )
+        )
+        ;
       allow delete: if false;
 
 

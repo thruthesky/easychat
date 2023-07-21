@@ -137,25 +137,171 @@ class ChatRoomMenuButton extends StatelessWidget {
     return IconButton(
       icon: const Icon(Icons.menu),
       onPressed: () async {
-        final otherUser = await EasyChat.instance.getOtherUserFromSingleChatRoom(room);
+        final otherUser = room.group == true ? null : await EasyChat.instance.getOtherUserFromSingleChatRoom(room);
         if (context.mounted) {
           showGeneralDialog(
-              context: context,
-              pageBuilder: (context, _, __) {
-                return Scaffold(
-                  appBar: AppBar(),
-                  body: SingleChildScrollView(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        if (room.group) ...[Text(room.name)],
-                        if (!room.group) ...[Text(otherUser!.displayName)],
-                      ],
-                    ),
+            context: context,
+            pageBuilder: (context, _, __) {
+              return Scaffold(
+                appBar: AppBar(
+                  title: const Text('Chat Room'),
+                ),
+                body: Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: ListView(
+                    children: [
+                      if (room.group) ...[Text(room.name)],
+                      if (!room.group) ...[Text(otherUser!.displayName)],
+                      InviteUserButton(room: room),
+                      ChatMembersButton(room: room),
+                    ],
                   ),
-                );
+                ),
+              );
+            },
+          );
+        }
+      },
+    );
+  }
+}
+
+class ChatMembersButton extends StatelessWidget {
+  const ChatMembersButton({
+    super.key,
+    required this.room,
+  });
+
+  final ChatRoomModel room;
+
+  @override
+  Widget build(BuildContext context) {
+    return TextButton(
+      child: const Text("Members"),
+      onPressed: () {
+        showGeneralDialog(
+          context: context,
+          pageBuilder: (context, _, __) {
+            return Scaffold(
+              appBar: AppBar(
+                title: const Text('Chat Members'),
+              ),
+              body: ListView.builder(
+                itemCount: room.users.length,
+                itemBuilder: (context, index) {
+                  return FutureBuilder(
+                    future: EasyChat.instance.getUser(room.users[index]),
+                    builder: (context, userSnapshot) {
+                      return ListTile(
+                        title: Text(userSnapshot.data?.displayName ?? ''),
+                        subtitle: Text(userSnapshot.data?.uid ?? ''),
+                        leading: (userSnapshot.data?.photoUrl ?? '').isEmpty
+                            ? null
+                            : CircleAvatar(
+                                backgroundImage: NetworkImage(userSnapshot.data!.photoUrl),
+                              ),
+                        onTap: () {
+                          showDialog(
+                            context: context,
+                            builder: (context) {
+                              return AlertDialog(
+                                title: Text(userSnapshot.data?.displayName ?? userSnapshot.data?.uid ?? ''),
+                                // TODO check first if Moderator
+                                content: TextButton(
+                                  child: const Text('Kick Out'),
+                                  onPressed: () {
+                                    debugPrint('Kicking this person out ${userSnapshot.data?.displayName}');
+                                  },
+                                ),
+                              );
+                            },
+                          );
+                        },
+                      );
+                    },
+                  );
+                },
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
+}
+
+class InviteUserButton extends StatelessWidget {
+  const InviteUserButton({
+    super.key,
+    required this.room,
+  });
+
+  final ChatRoomModel room;
+
+  @override
+  Widget build(BuildContext context) {
+    return TextButton(
+      child: const Text('Invite User'),
+      onPressed: () {
+        showGeneralDialog(
+          context: context,
+          pageBuilder: (context, _, __) {
+            return Scaffold(
+              appBar: AppBar(
+                title: const Text('Invite Users'),
+              ),
+              body: InviteUserListView(room: room),
+            );
+          },
+        );
+      },
+    );
+  }
+}
+
+class InviteUserListView extends StatefulWidget {
+  const InviteUserListView({
+    super.key,
+    required this.room,
+  });
+
+  final ChatRoomModel room;
+
+  @override
+  State<InviteUserListView> createState() => _InviteUserListViewState();
+}
+
+class _InviteUserListViewState extends State<InviteUserListView> {
+  @override
+  Widget build(BuildContext context) {
+    final query = FirebaseFirestore.instance
+        .collection(EasyChat.instance.usersCollection)
+        .where(FieldPath.documentId, whereNotIn: widget.room.users.take(10)); // Error message says limit is 10
+    return FirestoreListView(
+      query: query,
+      itemBuilder: (context, snapshot) {
+        // TODO how to remove blinking
+        final user = UserModel.fromDocumentSnapshot(snapshot);
+        if (widget.room.users.contains(user.uid)) {
+          return const SizedBox();
+        } else {
+          return ListTile(
+            title: Text(user.displayName),
+            subtitle: Text(user.uid),
+            leading: user.photoUrl.isEmpty
+                ? null
+                : CircleAvatar(
+                    backgroundImage: NetworkImage(user.photoUrl),
+                  ),
+            onTap: () {
+              debugPrint("Adding user ${user.displayName}");
+              EasyChat.instance.inviteUser(room: widget.room, user: user).then((value) {
+                setState(() {
+                  widget.room.users.add(user.uid);
+                });
               });
+            },
+          );
         }
       },
     );

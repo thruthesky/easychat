@@ -12,6 +12,7 @@ export 'src/widgets/chat_messages_list_view.dart';
 export 'src/widgets/chat_message_bubble.dart';
 export 'src/widgets/chat_room_list_tile.dart';
 export 'src/widgets/chat_room_list_tile_name.dart';
+export 'src/widgets/chat_room_open_list_view.dart';
 export 'src/widgets/chat_room_file_upload_bottom_sheet.dart';
 
 export 'src/functions.dart';

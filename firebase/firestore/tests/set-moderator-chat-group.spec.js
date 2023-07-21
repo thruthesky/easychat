@@ -116,6 +116,6 @@ describe("Firestore security test setting the moderators chat room", () => {
         assert.ok(doc3.data().moderators.includes(c.uid));
     });
 
-    // TODO continue here
+    // TODO failure - add as moderator but not in the room
 });
 
