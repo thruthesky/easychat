@@ -2,7 +2,7 @@ const assert = require("assert");
 const { db, a, b, c, d, tempChatRoomData, admin } = require("./setup");
 
 // load firebase-functions-test SDK
-// .
+// . !
 const firebase = require("@firebase/testing");
 
 describe("Rule tests", () => {
@@ -15,6 +15,7 @@ describe("Rule tests", () => {
 
 
         // 아무것도 업데이트 안해도 성공
+        // ...
         await firebase.assertSucceeds(
             db(a).collection("rule-test-onlyUpdating").doc(ref.id).update({})
         );
