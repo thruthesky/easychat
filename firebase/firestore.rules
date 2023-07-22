@@ -16,6 +16,7 @@ service cloud.firestore {
 
 
       
+      //
       function isMaster() {
         return  resource.data.master == request.auth.uid;
       }
