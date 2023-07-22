@@ -279,4 +279,4 @@ ChatRoomListView(
 
 
 - To run a single test file, run like below.
-  - `npm run mocha -- tests/xxxxx.spec.js`
+  - `npm run mocha -- tests/xxxxx.spec.js`by dev1
