@@ -20,9 +20,10 @@ class _TestScreenState extends State<TestScreen> {
 
   initTest() async {
     for (final user in Test.users) {
-      if (user.uid != null) continue;
-      final login = await Test.loginOrRegister(user);
-      user.uid = login.uid;
+      if (user.uid == null) {
+        final login = await Test.loginOrRegister(user);
+        user.uid = login.uid;
+      }
     }
 
     for (var e in Test.users) {
@@ -101,7 +102,8 @@ class _TestScreenState extends State<TestScreen> {
     // Get the no of new messages.
     final roomAfter = await EasyChat.instance.getOrCreateSingleChatRoom(Test.banana.uid);
 
-    Test.ok(roomAfter.noOfNewMessages[Test.banana.uid] == 2, "noOfNewMessages of Banana must be 1");
+    Test.ok(roomAfter.noOfNewMessages[Test.banana.uid] == 1,
+        "noOfNewMessages of Banana must be 1. Actual value: ${roomAfter.noOfNewMessages[Test.banana.uid]}");
 
     //     expect(roomAfter.noOfNewMessages[Test.banana.uid], 2, reason: "noOfNewMessages of Banana must be 1");
   }
