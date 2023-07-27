@@ -5,6 +5,7 @@ import 'package:example/chat.screen.dart';
 import 'package:example/example.chat.room.screen.dart';
 import 'package:example/open_rooms.screen.dart';
 import 'package:example/profile.screen.dart';
+import 'package:example/test/test.screen.dart';
 import 'package:example/user.list.screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -25,7 +26,7 @@ class _HomeScreenState extends State<HomeScreen> {
     super.initState();
 
     Timer.run(() {
-      Navigator.of(context).push(MaterialPageRoute(builder: (_) => const ChatScreen()));
+      // Navigator.of(context).push(MaterialPageRoute(builder: (_) => const ChatScreen()));
 
       // Navigator.of(context).push(MaterialPageRoute(builder: (_) => const UserListScren()));
 
@@ -93,6 +94,11 @@ class _HomeScreenState extends State<HomeScreen> {
                               },
                               child: const Text('Register'),
                             ),
+                            ElevatedButton(
+                              onPressed: () =>
+                                  Navigator.of(context).push(MaterialPageRoute(builder: (_) => const TestScreen())),
+                              child: const Text('TEST EasyChat'),
+                            ),
                           ]),
                         ],
                       )
@@ -151,6 +157,10 @@ class _HomeScreenState extends State<HomeScreen> {
                             onPressed: () =>
                                 Navigator.of(context).push(MaterialPageRoute(builder: (_) => const OpenRoomsScreen())),
                             child: const Text('Open Room List'),
+                          ),
+                          ElevatedButton(
+                            onPressed: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const TestScreen())),
+                            child: const Text('TEST EasyChat'),
                           ),
                         ],
                       );

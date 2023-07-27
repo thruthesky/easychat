@@ -22,6 +22,8 @@ class EasyChat {
   CollectionReference get chatCol => FirebaseFirestore.instance.collection('easychat');
   CollectionReference messageCol(String roomId) => chatCol.doc(roomId).collection('messages');
 
+  DocumentReference roomRef(String roomId) => chatCol.doc(roomId);
+
   DocumentReference get myDoc => FirebaseFirestore.instance.collection('users').doc(FirebaseAuth.instance.currentUser!.uid);
   DocumentReference roomDoc(String roomId) => chatCol.doc(roomId);
 
