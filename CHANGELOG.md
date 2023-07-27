@@ -1,18 +1,4 @@
-<<<<<<< HEAD
-## 0.0.3
 
-* Adding chat room
-
-
-## 0.0.2
-
-* Adding example code.
-
-
-## 0.0.1
-
-* Initial release.
-=======
 ## Version 0.1.1
 
 First public release
@@ -45,4 +31,3 @@ fixed - `update_user_claims` test code.
 ## Version 0.0.1
 
 Initial release of the easy extension.
->>>>>>> 5c912df (splitting extension from easy mono repo)
