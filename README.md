@@ -22,11 +22,13 @@
 - [Logic](#logic)
   - [Fields](#fields)
     - [Chat room fields](#chat-room-fields)
-    - [Chat user field](#chat-user-field)
+  - [Counting no of new messages](#counting-no-of-new-messages)
+  - [Displaying chat rooms that has new message (unread messages)](#displaying-chat-rooms-that-has-new-message-unread-messages)
   - [1:1 Chat and Multi user chat](#11-chat-and-multi-user-chat)
 - [UI Customization](#ui-customization)
   - [Chat room list](#chat-room-list)
 - [Run the Security Rule Test](#run-the-security-rule-test)
+- [Run the Logic Test](#run-the-logic-test)
 
 
 # TODO
@@ -215,11 +217,28 @@ Scafolld(
 - `group: [boolean]` - if true, it's group chat. otherwise it's 1:1 chat
 - `open: [boolean]` - if true, any one in the room can invite and anyone can jogin (except if it's 1:1 chat). If it's false, no one can join except the invitation of master and moderators.
 - `createdAt: [timestamp|date]` is the time that the chat room created.
+- `noOfNewMessages: Map<string, number>` - This contains the uid of the chat room users as key and the number of new messages as value.
 
-### Chat user field
+## Counting no of new messages
 
-- `uid: [string]` is the uid. It is needed for security rules.
-- `createdAt: [timestamp|date]` is the time that the user joined.
+- We don't seprate the stroage of the no of new message from the chat room document. We have thought about it and finalized that that is not worth. It does not have any money and the logic isn't any simple.
+- noOfNewMessages will have the uid and no. like `{uid-a: 5, uid-b: 0, uid-c: 2}`
+- When somebody chats, increase the no of new messages except the sender.
+- Wehn somebody receives a message in a chat room, make his no of new message to 0.
+- When somebody enters the chat room, make his no of new message to 0.
+
+
+
+## Displaying chat rooms that has new message (unread messages)
+
+- Get whole list of chat room.
+- Filter chat rooms that has 0 of noOfNewmessage of my uid.
+
+
+
+
+
+
 
 ## 1:1 Chat and Multi user chat
 
@@ -284,3 +303,12 @@ ChatRoomListView(
 
 - To run a single test file, run like below.
   - `npm run mocha -- tests/xxxxx.spec.js`by dev1
+
+
+
+# Run the Logic Test
+
+- We don't do the `unit test`, `widget test`, or `integration test`. Instead, we do `logic test` that is developed by ourselves for our test purpose.
+  - You can see the test in `TestScreen`.
+
+
