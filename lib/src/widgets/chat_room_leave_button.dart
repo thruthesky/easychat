@@ -24,13 +24,13 @@ class LeaveButton extends StatelessWidget {
                 TextButton(
                   child: const Text("Leave"),
                   onPressed: () {
-                    // TODO leave the room to prevent the error
+                    // ! For confirmation
+                    Navigator.pop(context);
+                    Navigator.pop(context);
+                    Navigator.pop(context);
                     EasyChat.instance.leaveRoom(
-                        room: room,
-                        callback: () {
-                          // TODO or leave here
-                        });
-                    debugPrint("Leaving");
+                      room: room,
+                    );
                   },
                 ),
                 TextButton(

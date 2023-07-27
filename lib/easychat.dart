@@ -3,6 +3,8 @@ export 'src/widgets/chat_friend_list.dart';
 export 'src/widgets/chat_room_list_view.dart';
 export 'src/widgets/chat_room_create.dart';
 
+export 'src/widgets/chat_room.dart';
+
 export 'src/models/chat_room_model.dart';
 export 'src/models/chat_message_model.dart';
 
@@ -26,7 +28,7 @@ export 'src/widgets/chat_room_members_list_view.dart';
 
 export 'src/widgets/chat_room_leave_button.dart';
 export 'src/widgets/chat_room_settings_button.dart';
-
+export 'src/widgets/chat_room_settings_screen.dart';
 export 'src/widgets/chat_room_no_of_new_messages_text.dart';
 export 'src/widgets/chat_room_open_list_view.dart';
 export 'src/widgets/chat_room_file_upload_bottom_sheet.dart';

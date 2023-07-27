@@ -53,19 +53,21 @@
 
 ## Features
 
-- The one who creats the chat room is the mater manager of the chat.
+- The one who creats the chat room is the master manager of the chat.
 - The master manager can set moderators.
 - Moderators can
   - kick out chat members.
-  - block chat members not to join again.
+  - block or unblock chat members not to join again.
   - set password so other member may not join.
 
 - `OpenChat`
   - A group chat which is searchable.
   - Anybody search chat room and join.
+  - Members of the group chat can invite other users.
 
 - `PrivateChat`
   - A group chat which is not searchable.
+  - Only Master and Moderators can invite users.
 
 
 

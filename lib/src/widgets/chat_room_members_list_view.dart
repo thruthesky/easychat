@@ -24,30 +24,42 @@ class _ChatRoomMembersListViewState extends State<ChatRoomMembersListView> {
         return FutureBuilder(
           future: EasyChat.instance.getUser(widget.room.users[index]),
           builder: (context, userSnapshot) {
+            if (userSnapshot.data == null) return const SizedBox();
+            final user = userSnapshot.data;
             return ListTile(
-              title: Text(userSnapshot.data?.displayName ?? ''),
-              // subtitle: Text(userSnapshot.data?.uid ?? ''),
-              subtitle: Text(widget.room.master == userSnapshot.data?.uid
-                  ? 'Master'
-                  : widget.room.moderators.contains(userSnapshot.data?.uid)
-                      ? 'Moderator'
-                      : ''),
-              leading: (userSnapshot.data?.photoUrl ?? '').isEmpty
+              title: Text(user?.displayName ?? ''),
+              subtitle: RichText(
+                text: TextSpan(
+                  style: DefaultTextStyle.of(context).style,
+                  children: <TextSpan>[
+                    TextSpan(
+                        text: widget.room.master == user?.uid
+                            ? 'Master '
+                            : widget.room.moderators.contains(user?.uid)
+                                ? 'Moderator '
+                                : '',
+                        style: const TextStyle(fontWeight: FontWeight.bold)),
+                    if (EasyChat.instance.isBlocked(room: widget.room, uid: user!.uid)) ...[
+                      const TextSpan(text: 'Blocked'),
+                    ],
+                  ],
+                ),
+              ),
+              leading: (user.photoUrl).isEmpty
                   ? null
                   : CircleAvatar(
-                      backgroundImage: NetworkImage(userSnapshot.data!.photoUrl),
+                      backgroundImage: NetworkImage(user.photoUrl),
                     ),
               onTap: () {
-                final user = userSnapshot.data;
                 showDialog(
                   context: context,
                   builder: (context) {
                     return AlertDialog(
-                      title: Text(user?.displayName ?? user?.uid ?? ''),
+                      title: Text(user.displayName.isEmpty ? user.uid : user.displayName),
                       content: Column(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          if (EasyChat.instance.canRemove(room: widget.room, userUid: user!.uid)) ...[
+                          if (EasyChat.instance.canRemove(room: widget.room, userUid: user.uid)) ...[
                             TextButton(
                               child: const Text('Remove from the Group'),
                               onPressed: () {
@@ -106,12 +118,25 @@ class _ChatRoomMembersListViewState extends State<ChatRoomMembersListView> {
                                   room: widget.room,
                                   uid: user.uid,
                                   callback: () {
-                                    setState(() {
-                                      widget.room.blockedUsers.add(user.uid);
-                                    });
+                                    Navigator.pop(context);
                                   },
                                 );
                                 debugPrint('Blocking this person');
+                              },
+                            ),
+                          ],
+                          if (EasyChat.instance.canUnblockUserFromGroup(room: widget.room, userUid: user.uid)) ...[
+                            TextButton(
+                              child: const Text('Unblock user from the group'),
+                              onPressed: () {
+                                EasyChat.instance.removeToBlockedUsers(
+                                  room: widget.room,
+                                  uid: user.uid,
+                                  callback: () {
+                                    Navigator.pop(context);
+                                  },
+                                );
+                                debugPrint('UNBlocking this person');
                               },
                             ),
                           ],

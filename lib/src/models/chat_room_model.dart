@@ -42,6 +42,20 @@ class ChatRoomModel {
     );
   }
 
+  update(Map<String, dynamic> updates) {
+    return ChatRoomModel(
+      id: id,
+      name: updates['name'] ?? name,
+      group: updates['group'] ?? group,
+      open: updates['open'] ?? open,
+      master: updates['master'] ?? master,
+      users: List<String>.from((updates['users'] ?? users)),
+      moderators: List<String>.from(updates['moderators'] ?? moderators),
+      blockedUsers: List<String>.from(updates['blockedUsers'] ?? blockedUsers),
+      noOfNewMessages: Map<String, int>.from(updates['noOfNewMessages'] ?? noOfNewMessages),
+    );
+  }
+
   Map<String, dynamic> toMap() {
     return {
       'id': id,

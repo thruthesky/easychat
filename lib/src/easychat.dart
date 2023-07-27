@@ -166,31 +166,40 @@ class EasyChat {
     await roomDoc(room.id).update({
       'blockedUsers': FieldValue.arrayUnion([uid])
     });
+    debugPrint('Being Blocked');
+    callback?.call();
+  }
+
+  Future<void> removeToBlockedUsers({required ChatRoomModel room, required String uid, Function()? callback}) async {
+    await roomDoc(room.id).update({
+      'blockedUsers': FieldValue.arrayRemove([uid])
+    });
+    debugPrint('Being UN-Blocked');
     callback?.call();
   }
 
   /// Return true if the uid is one of the moderators.
-  isModerator({required ChatRoomModel room, required String uid}) {
+  bool isModerator({required ChatRoomModel room, required String uid}) {
     return room.moderators.contains(uid);
   }
 
   /// Return true if the uid is the master
-  isMaster({required ChatRoomModel room, required String uid}) {
+  bool isMaster({required ChatRoomModel room, required String uid}) {
     return room.master == uid;
   }
 
   /// Is the user is master or moderator of the room?
-  isAdmin(ChatRoomModel room) {
+  bool isAdmin(ChatRoomModel room) {
     return room.master == uid || room.moderators.contains(uid);
   }
 
-  isBlocked({required ChatRoomModel room, required String uid}) {
-    return room.blockedUsers.contains(uid);
+  bool isBlocked({required ChatRoomModel room, required String uid}) {
+    return room.blockedUsers.isNotEmpty && room.blockedUsers.contains(uid);
   }
 
   /// Check if user can be removed in the group
   ///
-  canRemove({required ChatRoomModel room, required String userUid}) {
+  bool canRemove({required ChatRoomModel room, required String userUid}) {
     // One cannot remove himself
     if (userUid == uid) return false;
 
@@ -205,7 +214,7 @@ class EasyChat {
     return false;
   }
 
-  canSetUserAsModerator({required ChatRoomModel room, required String userUid}) {
+  bool canSetUserAsModerator({required ChatRoomModel room, required String userUid}) {
     // If the current user is not a master, don't allow
     if (!isMaster(room: room, uid: uid)) return false;
 
@@ -215,7 +224,7 @@ class EasyChat {
     return false;
   }
 
-  canRemoveUserAsModerator({required ChatRoomModel room, required String userUid}) {
+  bool canRemoveUserAsModerator({required ChatRoomModel room, required String userUid}) {
     // If the current user is not a master, don't allow
     if (!isMaster(room: room, uid: uid)) return false;
 
@@ -225,14 +234,32 @@ class EasyChat {
     return false;
   }
 
-  canBlockUserFromGroup({required ChatRoomModel room, required String userUid}) {
+  bool canBlockUserFromGroup({required ChatRoomModel room, required String userUid}) {
     // If the current user is not a admin, don't allow
     if (!isAdmin(room)) return false;
+
+    // If the target user is not a master, don't allow
+    if (isMaster(room: room, uid: userUid)) return false;
 
     // If the target user is not currently blocked, allow blocking
     if (!isBlocked(room: room, uid: userUid)) return true;
 
     return false;
+  }
+
+  bool canUnblockUserFromGroup({required ChatRoomModel room, required String userUid}) {
+    // If the current user is not a admin, don't allow
+    if (!isAdmin(room)) return false;
+
+    // If the target user is currently blocked, allow blocking
+    if (isBlocked(room: room, uid: userUid)) return true;
+
+    return false;
+  }
+
+  ChatRoomModel updateSetting({required ChatRoomModel room, required String setting, required dynamic value}) {
+    roomDoc(room.id).set({setting: value}, SetOptions(merge: true));
+    return room.update({setting: value});
   }
 
   Future<void> sendMessage({
@@ -302,28 +329,8 @@ class EasyChat {
       showGeneralDialog(
         context: context,
         pageBuilder: (_, __, ___) {
-          return Scaffold(
-            appBar: ChatRoomAppBar(room: room!),
-            body: Column(
-              children: [
-                Expanded(
-                  child: ChatMessagesListView(
-                    room: room,
-                  ),
-                ),
-                SafeArea(
-                  child: Column(
-                    children: [
-                      const Divider(height: 0),
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: ChatRoomMessageBox(room: room),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
+          return ChatRoom(
+            room: room!,
           );
         },
       );
