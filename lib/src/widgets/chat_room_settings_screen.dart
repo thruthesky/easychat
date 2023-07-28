@@ -28,18 +28,21 @@ class _ChatRoomSettingsScreenState extends State<ChatRoomSettingsScreen> {
       ),
       body: ListView(
         children: [
-          ChatRoomOpenSettingListTile(
-            room: _roomState!,
-            onToggleOpen: (updatedRoom) {
-              widget.onUpdateRoomSetting?.call(updatedRoom);
-            },
-          ),
-          ChatRoomMaximumUsersSettingListTile(
-            room: _roomState!,
-            onUpdateMaximumNoOfUsers: (updatedRoom) {
-              widget.onUpdateRoomSetting?.call(updatedRoom);
-            },
-          ),
+          if (EasyChat.instance.isMaster(room: widget.room, uid: EasyChat.instance.uid)) ...[
+            // TODO for confirmation, Only master can set Open ad Max Users?
+            ChatRoomOpenSettingListTile(
+              room: _roomState!,
+              onToggleOpen: (updatedRoom) {
+                widget.onUpdateRoomSetting?.call(updatedRoom);
+              },
+            ),
+            ChatRoomMaximumUsersSettingListTile(
+              room: _roomState!,
+              onUpdateMaximumNoOfUsers: (updatedRoom) {
+                widget.onUpdateRoomSetting?.call(updatedRoom);
+              },
+            ),
+          ]
         ],
       ),
     );

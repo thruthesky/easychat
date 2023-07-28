@@ -1,7 +1,6 @@
 {
   "configVersion": 2,
-  "packages": [
-    {
+  "packages": [{
       "name": "_flutterfire_internals",
       "rootUri": "file:///Users/thruthesky/.pub-cache/hosted/pub.dev/_flutterfire_internals-1.3.4",
       "packageUri": "lib/",
@@ -171,7 +170,7 @@
     },
     {
       "name": "flutter",
-      "rootUri": "file:///Users/thruthesky/bin/flutter/packages/flutter",
+      "rootUri": "file:///Users/jaehosong/flutter/packages/flutter",
       "packageUri": "lib/",
       "languageVersion": "3.0"
     },
@@ -183,7 +182,7 @@
     },
     {
       "name": "flutter_localizations",
-      "rootUri": "file:///Users/thruthesky/bin/flutter/packages/flutter_localizations",
+      "rootUri": "file:///Users/jaehosong/flutter/packages/flutter_localizations",
       "packageUri": "lib/",
       "languageVersion": "3.0"
     },
@@ -195,13 +194,13 @@
     },
     {
       "name": "flutter_test",
-      "rootUri": "file:///Users/thruthesky/bin/flutter/packages/flutter_test",
+      "rootUri": "file:///Users/jaehosong/flutter/packages/flutter_test",
       "packageUri": "lib/",
       "languageVersion": "3.0"
     },
     {
       "name": "flutter_web_plugins",
-      "rootUri": "file:///Users/thruthesky/bin/flutter/packages/flutter_web_plugins",
+      "rootUri": "file:///Users/jaehosong/flutter/packages/flutter_web_plugins",
       "packageUri": "lib/",
       "languageVersion": "3.0"
     },
@@ -321,7 +320,7 @@
     },
     {
       "name": "sky_engine",
-      "rootUri": "file:///Users/thruthesky/bin/flutter/bin/cache/pkg/sky_engine",
+      "rootUri": "file:///Users/jaehosong/flutter/bin/cache/pkg/sky_engine",
       "packageUri": "lib/",
       "languageVersion": "3.0"
     },
@@ -434,7 +433,7 @@
       "languageVersion": "3.0"
     }
   ],
-  "generated": "2023-07-27T10:07:57.591004Z",
+  "generated": "2023-07-28T05:33:16.345903Z",
   "generator": "pub",
   "generatorVersion": "3.0.6"
 }

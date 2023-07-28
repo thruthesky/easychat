@@ -201,9 +201,10 @@ Scafolld(
 * `users: Array[uid]` is the number of users.
 * `noOfNewMessages: Map<string, number>` - This contains the uid of the chat room users as key and the number of new messages as value.
 * `lastMessage: Map` is the last message in the room.
-  * `createdAt` is the time that the last message was sent.
-  * `senderUid` is the sender Uid
-  * `text` is the text in the message
+  * `createdAt: [timestamp|date]` is the time that the last message was sent.
+  * `senderUid: [string]` is the sender Uid
+  * `text: [string]` is the text in the message
+* `maximumNoOfUsers: [int]` is the maximum no of users in the group.
 
 #### Chat Message fields
 
@@ -277,6 +278,50 @@ ChatRoomListView(
         });
   },
 )
+```
+
+## Chat Room Settings
+
+* `Open Chat Room` This setting determines if the group chat is open or private. Open means anybody can join and invite. Private means only the master or moderators can invite. See the code below to use the Default List Tile.
+
+```dart
+ChatRoomOpenSettingListTile(
+  room: chatRoomModel,
+  onToggleOpen: (updatedRoom) {
+    debugPrint('Updated Room Open Setting. Setting: ${updatedRoom.open}');
+  },
+),
+```
+
+To programatically update the setting, follow the code below. It will return the room with updated setting.
+
+```dart
+updatedRoom = await EasyChat.instance.updateRoomSetting(
+  room: chatRoomModel,
+  setting: 'open',
+  value: updatedBoolValue,
+);
+```
+
+* `Maximum Number of User` This number sets the limitation for the number of users in the chat room. If the current number of users is equal or more than this setting, it will not proceed on adding the user.
+
+```dart
+ChatRoomMaximumUsersSettingListTile(
+  room: chatRoomModel,
+  onUpdateMaximumNoOfUsers: (updatedRoom) {
+    debugPrint('Updated Maximum number of Users Setting. Setting: ${updatedRoom.maximumNoOfUsers}');
+  },
+),
+```
+
+To programatically update the setting, follow the code below. It will return the room with updated setting.
+
+```dart
+updatedRoom = await EasyChat.instance.updateRoomSetting(
+  room: chatRoomModel,
+  setting: 'maximumNoOfUsers',
+  value: updatedIntValue
+);
 ```
 
 ## Run the Security Rule Test
