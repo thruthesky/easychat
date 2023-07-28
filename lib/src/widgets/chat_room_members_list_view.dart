@@ -121,7 +121,6 @@ class _ChatRoomMembersListViewState extends State<ChatRoomMembersListView> {
                                     Navigator.pop(context);
                                   },
                                 );
-                                debugPrint('Blocking this person');
                               },
                             ),
                           ],
@@ -136,7 +135,6 @@ class _ChatRoomMembersListViewState extends State<ChatRoomMembersListView> {
                                     Navigator.pop(context);
                                   },
                                 );
-                                debugPrint('UNBlocking this person');
                               },
                             ),
                           ],

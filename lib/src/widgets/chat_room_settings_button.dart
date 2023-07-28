@@ -5,11 +5,11 @@ class ChatSettingsButton extends StatefulWidget {
   const ChatSettingsButton({
     super.key,
     required this.room,
-    this.onToggleOpen,
+    this.onUpdateRoomSetting,
   });
 
   final ChatRoomModel room;
-  final Function(ChatRoomModel room)? onToggleOpen;
+  final Function(ChatRoomModel room)? onUpdateRoomSetting;
 
   @override
   State<ChatSettingsButton> createState() => _ChatSettingsButtonState();
@@ -36,7 +36,7 @@ class _ChatSettingsButtonState extends State<ChatSettingsButton> {
                     _roomState = updatedRoom;
                   });
                 }
-                widget.onToggleOpen?.call(updatedRoom);
+                widget.onUpdateRoomSetting?.call(updatedRoom);
               },
             );
           },

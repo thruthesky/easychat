@@ -34,9 +34,11 @@ class _ChatRoomMaximumUsersSettingListTileState extends State<ChatRoomMaximumUse
         textInputAction: TextInputAction.done,
         decoration: const InputDecoration(hintText: 'Enter the limit number of user who can join.'),
         onFieldSubmitted: (value) async {
-          debugPrint('Submitting Field $value');
           _roomState = await EasyChat.instance.updateRoomSetting(
-              room: _roomState!, setting: 'maximumNoOfUsers', value: value.isNotEmpty ? int.parse(value) : null);
+            room: _roomState!,
+            setting: 'maximumNoOfUsers',
+            value: value.isNotEmpty ? int.parse(value) : null,
+          );
           if (mounted) setState(() {});
           widget.onUpdateMaximumNoOfUsers?.call(_roomState!);
         },
@@ -46,8 +48,6 @@ class _ChatRoomMaximumUsersSettingListTileState extends State<ChatRoomMaximumUse
 
   @override
   void dispose() {
-    // Clean up the controller when the widget is removed from the
-    // widget tree.
     maxNumberOfUsers.dispose();
     super.dispose();
   }

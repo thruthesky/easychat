@@ -5,9 +5,11 @@ class ChatRoomMenuButton extends StatefulWidget {
   const ChatRoomMenuButton({
     super.key,
     required this.room,
+    this.onUpdateRoomSetting,
   });
 
   final ChatRoomModel room;
+  final Function(ChatRoomModel updatedRoom)? onUpdateRoomSetting;
 
   @override
   State<ChatRoomMenuButton> createState() => _ChatRoomMenuButtonState();
@@ -28,6 +30,9 @@ class _ChatRoomMenuButtonState extends State<ChatRoomMenuButton> {
               return ChatRoomMenuScreen(
                 room: widget.room,
                 otherUser: otherUser,
+                onUpdateRoomSetting: (updatedRoom) {
+                  widget.onUpdateRoomSetting?.call(updatedRoom);
+                },
               );
             },
           );

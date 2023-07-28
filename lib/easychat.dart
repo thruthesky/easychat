@@ -32,6 +32,7 @@ export 'src/widgets/chat_room_settings_button.dart';
 export 'src/widgets/chat_room_settings_screen.dart';
 export 'src/widgets/chat_room_open_setting_list_tile.dart';
 export 'src/widgets/chat_room_maximum_users_setting_list_tile.dart';
+export 'src/widgets/chat_room_default_room_name_setting.dart';
 
 export 'src/widgets/chat_room_no_of_new_messages_text.dart';
 export 'src/widgets/chat_room_open_list_view.dart';

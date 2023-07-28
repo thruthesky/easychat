@@ -176,7 +176,6 @@ class EasyChat {
     await roomDoc(room.id).update({
       'blockedUsers': FieldValue.arrayUnion([uid])
     });
-    debugPrint('Being Blocked');
     callback?.call();
   }
 
@@ -184,7 +183,6 @@ class EasyChat {
     await roomDoc(room.id).update({
       'blockedUsers': FieldValue.arrayRemove([uid])
     });
-    debugPrint('Being UN-Blocked');
     callback?.call();
   }
 
@@ -270,7 +268,6 @@ class EasyChat {
   Future<ChatRoomModel> updateRoomSetting(
       {required ChatRoomModel room, required String setting, required dynamic value}) async {
     await roomDoc(room.id).set({setting: value}, SetOptions(merge: true));
-    debugPrint('Setting: $setting $value');
     return room.update({setting: value});
   }
 
