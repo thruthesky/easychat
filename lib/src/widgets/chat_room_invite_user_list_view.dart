@@ -18,17 +18,19 @@ class InviteUserListView extends StatefulWidget {
 }
 
 class _InviteUserListViewState extends State<InviteUserListView> {
+  ChatRoomModel? _roomState;
   @override
   Widget build(BuildContext context) {
+    _roomState ??= widget.room;
     final query = FirebaseFirestore.instance
         .collection(EasyChat.instance.usersCollection)
-        .where(FieldPath.documentId, whereNotIn: widget.room.users.take(10)); // Error message says limit is 10
+        .where(FieldPath.documentId, whereNotIn: _roomState!.users.take(10)); // Error message says limit is 10
     return FirestoreListView(
       query: query,
       itemBuilder: (context, snapshot) {
         // TODO how to remove blinking
         final user = UserModel.fromDocumentSnapshot(snapshot);
-        if (widget.room.users.contains(user.uid)) {
+        if (_roomState!.users.contains(user.uid)) {
           return const SizedBox();
         } else {
           return ListTile(
@@ -39,14 +41,10 @@ class _InviteUserListViewState extends State<InviteUserListView> {
                 : CircleAvatar(
                     backgroundImage: NetworkImage(user.photoUrl),
                   ),
-            onTap: () {
-              debugPrint("Adding user ${user.displayName}");
-              EasyChat.instance.inviteUser(room: widget.room, user: user).then((value) {
-                setState(() {
-                  widget.room.users.add(user.uid);
-                });
-                widget.onInvite?.call(user.uid);
-              });
+            onTap: () async {
+              _roomState = await EasyChat.instance.inviteUser(room: _roomState!, userUid: user.uid);
+              if (mounted) setState(() {});
+              widget.onInvite?.call(user.uid);
             },
           );
         }

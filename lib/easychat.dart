@@ -27,8 +27,12 @@ export 'src/widgets/chat_room_members_button.dart';
 export 'src/widgets/chat_room_members_list_view.dart';
 
 export 'src/widgets/chat_room_leave_button.dart';
+
 export 'src/widgets/chat_room_settings_button.dart';
 export 'src/widgets/chat_room_settings_screen.dart';
+export 'src/widgets/chat_room_open_setting_list_tile.dart';
+export 'src/widgets/chat_room_maximum_users_list_tile.dart';
+
 export 'src/widgets/chat_room_no_of_new_messages_text.dart';
 export 'src/widgets/chat_room_open_list_view.dart';
 export 'src/widgets/chat_room_file_upload_bottom_sheet.dart';

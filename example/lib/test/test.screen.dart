@@ -31,6 +31,7 @@ class _TestScreenState extends State<TestScreen> {
     }
 
     testNoOfNewMessage();
+    testMaximumNoOfUsers();
   }
 
   @override
@@ -105,6 +106,45 @@ class _TestScreenState extends State<TestScreen> {
     Test.ok(roomAfter.noOfNewMessages[Test.banana.uid] == 1,
         "noOfNewMessages of Banana must be 1. Actual value: ${roomAfter.noOfNewMessages[Test.banana.uid]}");
 
-    //     expect(roomAfter.noOfNewMessages[Test.banana.uid], 2, reason: "noOfNewMessages of Banana must be 1");
+    // Send a message with the room information.
+    await EasyChat.instance.sendMessage(
+      room: room,
+      text: 'yo2',
+    );
+
+    // Get the no of new messages.
+    final roomAfter2 = await EasyChat.instance.getOrCreateSingleChatRoom(Test.banana.uid);
+
+    Test.ok(roomAfter2.noOfNewMessages[Test.banana.uid] == 2,
+        "noOfNewMessages of Banana must be 2. Actual value: ${roomAfter.noOfNewMessages[Test.banana.uid]}");
+  }
+
+  testMaximumNoOfUsers() async {
+    await FirebaseAuth.instance.signOut();
+
+    // Wait until logout is complete or you may see firestore permission denied error.
+    await Future.delayed(const Duration(milliseconds: 200));
+
+    // Sign in with apple with its password
+    await Test.loginOrRegister(Test.apple);
+
+    // Get the room
+    ChatRoomModel room = await EasyChat.instance.createChatRoom(roomName: 'Testing Room');
+
+    // update the setting
+    room = await EasyChat.instance.updateRoomSetting(room: room, setting: 'maximumNoOfUsers', value: 3);
+
+    // add the users
+    room = await EasyChat.instance.inviteUser(room: room, userUid: Test.banana.uid);
+    room = await EasyChat.instance.inviteUser(room: room, userUid: Test.cherry.uid);
+
+    // THis should not work because the max is 3
+    room = await EasyChat.instance.inviteUser(room: room, userUid: Test.durian.uid);
+
+    // Get the room
+    final roomAfter = await EasyChat.instance.getRoom(room.id);
+
+    Test.ok(roomAfter.users.length == 3,
+        "maximumNoOfUsers must be limited to 3. Actual value: ${roomAfter.users.length}. Expected: ${roomAfter.maximumNoOfUsers}");
   }
 }

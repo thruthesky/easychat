@@ -4,12 +4,14 @@ class UserModel {
   final String uid;
   final String displayName;
   final String photoUrl;
+  final String? email;
   final bool hasPhotoUrl;
 
   UserModel({
     required this.uid,
     required this.displayName,
     required this.photoUrl,
+    this.email,
   }) : hasPhotoUrl = photoUrl.isNotEmpty;
 
   factory UserModel.fromDocumentSnapshot(DocumentSnapshot documentSnapshot) {
@@ -22,6 +24,7 @@ class UserModel {
       uid: id,
       displayName: displayName == '' ? id.toUpperCase().substring(0, 2) : displayName,
       photoUrl: (map['photoUrl'] ?? '') as String,
+      email: map['email'],
     );
   }
 
@@ -30,6 +33,7 @@ class UserModel {
       'id': uid,
       'displayName': displayName,
       'photoUrl': photoUrl,
+      'email': email,
     };
   }
 
