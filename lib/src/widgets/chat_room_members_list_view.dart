@@ -68,7 +68,7 @@ class _ChatRoomMembersListViewState extends State<ChatRoomMembersListView> {
                                   uid: user.uid,
                                   callback: () {
                                     setState(() {
-                                      widget.room.users.remove(user!.uid);
+                                      widget.room.users.remove(user.uid);
                                     });
                                     Navigator.pop(context);
                                   },

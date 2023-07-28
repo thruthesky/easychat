@@ -11,6 +11,7 @@ class ChatRoomModel {
   final List<String> moderators;
   final List<String> blockedUsers;
   final Map<String, int> noOfNewMessages;
+  final int? maximumNoOfUsers;
 
   ChatRoomModel({
     required this.id,
@@ -22,6 +23,7 @@ class ChatRoomModel {
     required this.moderators,
     required this.blockedUsers,
     required this.noOfNewMessages,
+    required this.maximumNoOfUsers,
   });
 
   factory ChatRoomModel.fromDocumentSnapshot(DocumentSnapshot documentSnapshot) {
@@ -39,6 +41,7 @@ class ChatRoomModel {
       moderators: List<String>.from(map['moderators'] ?? []),
       blockedUsers: List<String>.from(map['blockedUsers'] ?? []),
       noOfNewMessages: Map<String, int>.from(map['noOfNewMessages'] ?? {}),
+      maximumNoOfUsers: map['maximumNoOfUsers'],
     );
   }
 
@@ -53,6 +56,7 @@ class ChatRoomModel {
       moderators: List<String>.from(updates['moderators'] ?? moderators),
       blockedUsers: List<String>.from(updates['blockedUsers'] ?? blockedUsers),
       noOfNewMessages: Map<String, int>.from(updates['noOfNewMessages'] ?? noOfNewMessages),
+      maximumNoOfUsers: updates['maximumNoOfUsers'],
     );
   }
 
@@ -67,6 +71,7 @@ class ChatRoomModel {
       'moderators': moderators,
       'blockedUsers': blockedUsers,
       'noOfNewMessages': noOfNewMessages,
+      'maximumNoOfUsers': maximumNoOfUsers,
     };
   }
 

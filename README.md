@@ -8,7 +8,7 @@
   * [Principle of Design](#principle-of-design)
   * [Features](#features)
 * [Environment](#environment)
-* [Features](#features-1)
+* [Features](#features)
 * [Setup](#setup)
   * [Firebase Setup](#firebase-setup)
     * [Firebase Users collection](#firebase-users-collection)
@@ -30,16 +30,16 @@
 * [Run the Security Rule Test](#run-the-security-rule-test)
 * [Run the Logic Test](#run-the-logic-test)
 
-# TODO
+## TODO
 
 * See the Principle.
 * Login is required to use this app. Meaning, this package does not provide login relational feature. the parent app must provide login and login is reuqired for using this package.
 * Create chat room.
 * Updating user's display name and photo url in chat room collection. Not indivisual chat message.
 
-# Overview
+## Overview
 
-## Principle of Design
+### Principle of Design
 
 * Easychat provides logic as much as possible. This means, the app must provide UI and hook the user event with the easychat logic.
   * In some case, easychat must provide ui like displaying the list of chat friend list or chat room and message list. But still easychaht provides a way to customise everything.
@@ -49,7 +49,7 @@
 * Easychat throws exceptions when there are problems. It is the app's responsibility to catch and handle them.
 * For sample UI widgets, it provides `sucess` and `error` handler.
 
-## Features
+### Features
 
 * The one who creats the chat room is the master manager of the chat.
 * The master manager can set moderators.
@@ -67,19 +67,19 @@
   * A group chat which is not searchable.
   * Only Master and Moderators can invite users.
 
-# Environment
+## Environment
 
 * Firestore
 
-# Features
+## Basic Features
 
 * Chat room list
 * 1:1 chat room & multi chat
 * File upload api
 
-# Setup
+## Setup
 
-## Firebase Setup
+### Firebase Setup
 
 * Easychat package uses the same connection on your application. You can simply initialize firebase connection inside your application.
 
@@ -87,7 +87,7 @@
 * `/easychat` is the root collection for all chat. The document inside this collection has chat room information.
 * `/eachchat/{documentId}/messages` is the collection for storing all the chat messages.
 
-### Firebase Users collection
+#### Firebase Users collection
 
 * You can initialize the easychat to use your user list collection and It must be readable.
   * Easychat needs displayName and photoUrl in the collection.
@@ -99,7 +99,7 @@ EasyChat.instance.initialize(usersCollection: 'users', displayNameField: 'displa
 
 * Warning! Once a user changes his displayName and photoUrl, `EasyChat.instance.updateUser()` must be called to update user information in easychat.
 
-### Firestore Security Rules
+#### Firestore Security Rules
 
 * Copy the following security rules and paste it into your Firebase project.
 
@@ -107,9 +107,9 @@ EasyChat.instance.initialize(usersCollection: 'users', displayNameField: 'displa
  ... security rules here ...
 ```
 
-# Widgets and Logics
+## Widgets and Logics
 
-## Create a chat room
+### Create a chat room
 
 * To create a chat room, add a button and display `ChatRoomCreate` widget. You may copy the code from `ChatRoomCreate` and apply your own design.
 
@@ -148,11 +148,11 @@ Scafolld(
 )
 ```
 
-## Additional information
+### Additional information
 
 * Please create issues.
 
-## How to test & UI work Chat room screen
+### How to test & UI work Chat room screen
 
 ```dart
 
@@ -177,9 +177,9 @@ Scafolld(
     });
 ```
 
-# Firebase
+## Firebase
 
-## Security Rules
+### Security Rules
 
 * Run firestore emulator like below and test the security rules.
 
@@ -187,11 +187,11 @@ Scafolld(
 % firebase emulators:start --only firestore
 ```
 
-# Logic
+## Logic
 
-## Fields
+### Fields
 
-### Chat Room fields
+#### Chat Room fields
 
 * `master: [string]` is the master. root of the chat room.
 * `moderators: Array[uid]` is the moderators.
@@ -205,7 +205,7 @@ Scafolld(
   * `senderUid` is the sender Uid
   * `text` is the text in the message
 
-### Chat Message fields
+#### Chat Message fields
 
 * `text` is the text message [Optional] - Optional, meaning, a message can be sent without the text.
 * `createdAt` is the time that the message was sent.
@@ -214,7 +214,7 @@ Scafolld(
 * `fileUrl [String]` is the file's URL added to the message. [Optional]
 * `fileName` is the file name of the file from `fileUrl`. [Optional]
 
-## Counting no of new messages
+### Counting no of new messages
 
 * We don't seprate the storage of the no of new message from the chat room document. We have thought about it and finalized that that is not worth. It does not have any money and the logic isn't any simple.
 * noOfNewMessages will have the uid and no. like `{uid-a: 5, uid-b: 0, uid-c: 2}`
@@ -222,12 +222,12 @@ Scafolld(
 * Wehn somebody receives a message in a chat room, make his no of new message to 0.
 * When somebody enters the chat room, make his no of new message to 0.
 
-## Displaying chat rooms that has new message (unread messages)
+### Displaying chat rooms that has new message (unread messages)
 
 * Get whole list of chat room.
 * Filter chat rooms that has 0 of noOfNewmessage of my uid.
 
-## 1:1 Chat and Multi user chat
+### 1:1 Chat and Multi user chat
 
 * 1:1 chat room id must be consisted with `uid-uid` pattern in alphabetically sorted.
 
@@ -253,11 +253,11 @@ Scafolld(
 * group chat room must have `{group: true, open: [boolean]}`. This is for searching purpose in Firestore.
   * For 1:1 chat room, it must be `{group: false, open: false}`. This is for searching purpose in Firestore.
 
-# UI Customization
+## UI Customization
 
 UI can be customized
 
-## Chat room list
+### Chat room list
 
 * To list chat rooms, use the code below.
 
@@ -279,7 +279,7 @@ ChatRoomListView(
 )
 ```
 
-# Run the Security Rule Test
+## Run the Security Rule Test
 
 * To run all the tests
   * `% npm run test`
@@ -287,7 +287,7 @@ ChatRoomListView(
 * To run a single test file, run like below.
   * `npm run mocha -- tests/xxxxx.spec.js`by dev1
 
-# Run the Logic Test
+## Run the Logic Test
 
 * We don't do the `unit test`, `widget test`, or `integration test`. Instead, we do `logic test` that is developed by ourselves for our test purpose.
   * You can see the test in `TestScreen`.
