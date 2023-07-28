@@ -28,7 +28,7 @@ class _ChatRoomSettingsScreenState extends State<ChatRoomSettingsScreen> {
       ),
       body: ListView(
         children: [
-          if (EasyChat.instance.isMaster(room: widget.room, uid: EasyChat.instance.uid)) ...[
+          if (EasyChat.instance.isMaster(room: widget.room, uid: EasyChat.instance.uid) && _roomState!.group) ...[
             // TODO for confirmation, Only master can set Open ad Max Users?
             ChatRoomOpenSettingListTile(
               room: _roomState!,
