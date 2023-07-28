@@ -23,7 +23,7 @@ class ChatRoomModel {
     required this.moderators,
     required this.blockedUsers,
     required this.noOfNewMessages,
-    required this.maximumNoOfUsers,
+    this.maximumNoOfUsers,
   });
 
   factory ChatRoomModel.fromDocumentSnapshot(DocumentSnapshot documentSnapshot) {
@@ -56,7 +56,7 @@ class ChatRoomModel {
       moderators: List<String>.from(updates['moderators'] ?? moderators),
       blockedUsers: List<String>.from(updates['blockedUsers'] ?? blockedUsers),
       noOfNewMessages: Map<String, int>.from(updates['noOfNewMessages'] ?? noOfNewMessages),
-      maximumNoOfUsers: updates['maximumNoOfUsers'],
+      maximumNoOfUsers: updates.containsKey('maximumNoOfUsers') ? updates['maximumNoOfUsers'] : maximumNoOfUsers,
     );
   }
 

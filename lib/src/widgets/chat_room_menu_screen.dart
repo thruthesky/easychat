@@ -7,12 +7,12 @@ class ChatRoomMenuScreen extends StatefulWidget {
     super.key,
     required this.room,
     this.otherUser,
-    this.onToggleOpen,
+    this.onUpdateRoomSetting,
   });
 
   final ChatRoomModel room;
   final UserModel? otherUser;
-  final Function(bool open)? onToggleOpen;
+  final Function(ChatRoomModel updatedRoom)? onUpdateRoomSetting;
 
   @override
   State<ChatRoomMenuScreen> createState() => _ChatRoomMenuScreenState();
@@ -32,13 +32,18 @@ class _ChatRoomMenuScreenState extends State<ChatRoomMenuScreen> {
       stream: _roomStream,
       builder: (BuildContext context, AsyncSnapshot<DocumentSnapshot<Object?>> snapshot) {
         if (snapshot.hasError) {
-          return Text('Something went wrong');
+          return Scaffold(
+            appBar: AppBar(),
+            body: const Text('Something went wrong'),
+          );
         }
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return Text("Loading");
+          return Scaffold(
+            appBar: AppBar(),
+            body: const Text('Loading...'),
+          );
         }
         _roomState = ChatRoomModel.fromDocumentSnapshot(snapshot.data!);
-        debugPrint('rebuilt!!');
         return Scaffold(
           appBar: AppBar(
             title: const Text('Chat Room'),
@@ -69,14 +74,12 @@ class _ChatRoomMenuScreenState extends State<ChatRoomMenuScreen> {
               ),
               ChatSettingsButton(
                 room: _roomState!,
-                onToggleOpen: (open) {
-                  debugPrint('Managing State $open');
-                  widget.onToggleOpen?.call(open);
+                onToggleOpen: (updatedRoom) {
+                  debugPrint('Managing State $updatedRoom');
+                  widget.onUpdateRoomSetting?.call(updatedRoom);
                   setState(() {
-                    _roomState = _roomState!.update({
-                      'open': open,
-                    });
-                    debugPrint('Chat Room Menu State open $open');
+                    _roomState = updatedRoom;
+                    debugPrint('Chat Room Menu State open ${updatedRoom.open}');
                   });
                 },
               ),

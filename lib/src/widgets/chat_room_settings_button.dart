@@ -9,7 +9,7 @@ class ChatSettingsButton extends StatefulWidget {
   });
 
   final ChatRoomModel room;
-  final Function(bool open)? onToggleOpen;
+  final Function(ChatRoomModel room)? onToggleOpen;
 
   @override
   State<ChatSettingsButton> createState() => _ChatSettingsButtonState();
@@ -30,13 +30,13 @@ class _ChatSettingsButtonState extends State<ChatSettingsButton> {
           pageBuilder: (context, _, __) {
             return ChatRoomSettingsScreen(
               room: _roomState!,
-              onToggleOpen: (open) {
-                setState(() {
-                  _roomState = _roomState!.update({
-                    'open': open,
+              onUpdateRoomSetting: (updatedRoom) {
+                if (mounted) {
+                  setState(() {
+                    _roomState = updatedRoom;
                   });
-                });
-                widget.onToggleOpen?.call(open);
+                }
+                widget.onToggleOpen?.call(updatedRoom);
               },
             );
           },

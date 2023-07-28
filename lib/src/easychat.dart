@@ -71,8 +71,7 @@ class EasyChat {
   /// ! This will expectedly throw an error if we are trying to get a non existing record.
   Future<ChatRoomModel> getSingleChatRoom(String uid) async {
     final roomId = getSingleChatRoomId(uid);
-    final snapshot = await roomDoc(roomId).get();
-    return ChatRoomModel.fromDocumentSnapshot(snapshot);
+    return getRoom(roomId);
   }
 
   /// Get Chat room if exists, create the chatroom if not exist yet
@@ -84,6 +83,11 @@ class EasyChat {
         otherUserUid: uid,
       );
     }
+  }
+
+  Future<ChatRoomModel> getRoom(String roomId) async {
+    final snapshot = await roomDoc(roomId).get();
+    return ChatRoomModel.fromDocumentSnapshot(snapshot);
   }
 
   /// Create chat room
@@ -118,20 +122,24 @@ class EasyChat {
     // chat room id
     final roomId = isSingleChat ? getSingleChatRoomId(otherUserUid) : chatCol.doc().id;
     await chatCol.doc(roomId).set(roomData);
-
     return ChatRoomModel.fromMap(map: roomData, id: roomId);
   }
 
-  Future<void> inviteUser({required ChatRoomModel room, required UserModel user}) async {
-    await roomDoc(room.id).update({
-      'users': FieldValue.arrayUnion([user.uid])
-    });
+  Future<ChatRoomModel> inviteUser({required ChatRoomModel room, required String userUid}) async {
+    return await addUserToRoom(room: room, userUid: userUid);
   }
 
-  Future<void> joinRoom({required ChatRoomModel room}) async {
+  Future<ChatRoomModel> joinRoom({required ChatRoomModel room}) async {
+    return await addUserToRoom(room: room, userUid: uid);
+  }
+
+  Future<ChatRoomModel> addUserToRoom({required ChatRoomModel room, required String userUid}) async {
+    if (room.users.length >= (room.maximumNoOfUsers ?? room.users.length + 1)) return room; // TODO how do we show error message
     await roomDoc(room.id).update({
-      'users': FieldValue.arrayUnion([uid])
+      'users': FieldValue.arrayUnion([userUid])
     });
+    room.users.add(userUid);
+    return room.update({'users': room.users});
   }
 
   Future<void> leaveRoom({required ChatRoomModel room, Function()? callback}) async {
@@ -259,8 +267,10 @@ class EasyChat {
     return false;
   }
 
-  ChatRoomModel updateSetting({required ChatRoomModel room, required String setting, required dynamic value}) {
-    roomDoc(room.id).set({setting: value}, SetOptions(merge: true));
+  Future<ChatRoomModel> updateRoomSetting(
+      {required ChatRoomModel room, required String setting, required dynamic value}) async {
+    await roomDoc(room.id).set({setting: value}, SetOptions(merge: true));
+    debugPrint('Setting: $setting $value');
     return room.update({setting: value});
   }
 
