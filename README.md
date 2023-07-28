@@ -280,6 +280,53 @@ ChatRoomListView(
 )
 ```
 
+## Chat Room Menu
+
+The chat room menu can be accessed by the Chat Room Menu Button. This will open the Chat Room Menu Screen.
+
+```dart
+ChatRoomMenuButton(
+  room: chatRoomModel,
+  onUpdateRoomSetting: (updatedRoom) {
+    debugPrint("If a setting was updated. Setting: ${updatedRoom.toString()}");
+  },
+),
+```
+
+The Chat Room Menu consists the following:
+
+* `Invite User` This button opens a List View of users that can be invited to the group chat. To use Invite User Button for List View, follow the code:
+
+```dart
+InviteUserButton(
+  room: chatRoomModel,
+  onInvite: (invitedUserUid) {
+    debugPrint("You have just invited a user with a uid of $invitedUserUid");
+  },
+),
+```
+
+To programatically, invite a user, follow these codes:
+
+```dart
+updatedRoom = await EasyChat.instance.inviteUser(room: chatRoomModel, userUid: user.uid);
+```
+
+* `Settings` This can open the chat room settings. To use the button that opens the settings menu:
+
+```dart
+ChatSettingsButton(
+  room: chatRoomModel,
+  onUpdateRoomSetting: (updatedRoom) {
+    debugPrint("Something was updated in the room. Setting ${updatedRoom.toString()}");
+  },
+),
+```
+
+See [Chat Room Settings](#chat-room-settings) for more details
+
+* `Members` This is a List View of the members of the group chat. The user can be marked as [Master], [Moderator] and/or [Blocked]. Tapping the user will open a Dialog that may show options for Setting as Moderator, or Blocking on the group.
+
 ## Chat Room Settings
 
 * `Open Chat Room` This setting determines if the group chat is open or private. Open means anybody can join and invite. Private means only the master or moderators can invite. See the code below to use the Default List Tile.
@@ -344,7 +391,6 @@ updatedRoom = await EasyChat.instance.updateRoomSetting(
   value: updatedName
 );
 ```
-
 
 ## Run the Security Rule Test
 

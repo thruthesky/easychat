@@ -48,7 +48,18 @@ class _ChatRoomSettingsScreenState extends State<ChatRoomSettingsScreen> {
                 widget.onUpdateRoomSetting?.call(updatedRoom);
               },
             ),
-          ]
+          ],
+          // ! Still Ongoing
+          // TODO Proceed here christian
+          const ListTile(
+            title: Text("Rename Chat Room"),
+            subtitle: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text("This will rename the chat room only on your view."),
+              ],
+            ),
+          ),
         ],
       ),
     );

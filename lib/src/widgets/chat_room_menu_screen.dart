@@ -78,7 +78,6 @@ class _ChatRoomMenuScreenState extends State<ChatRoomMenuScreen> {
                   widget.onUpdateRoomSetting?.call(updatedRoom);
                   setState(() {
                     _roomState = updatedRoom;
-                    debugPrint('Chat Room Menu State open ${updatedRoom.name}');
                   });
                 },
               ),
