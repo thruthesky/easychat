@@ -324,6 +324,28 @@ updatedRoom = await EasyChat.instance.updateRoomSetting(
 );
 ```
 
+* `Default Chat Room Name` The master can use this setting to set the default name of the Group Chat.
+
+```dart
+ChatRoomDefaultRoomNameSettingListTile(
+  room: _roomState!,
+  onUpdateChatRoomName: (updatedRoom) {
+    widget.onUpdateRoomSetting?.call(updatedRoom);
+  },
+),
+```
+
+To programatically update the default chat room name, follow the code below. It will return the room with updated setting.
+
+```dart
+updatedRoom = await EasyChat.instance.updateRoomSetting(
+  room: chatRoomModel,
+  setting: 'name',
+  value: updatedName
+);
+```
+
+
 ## Run the Security Rule Test
 
 * To run all the tests
