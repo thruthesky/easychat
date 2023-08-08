@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:firebase_auth/firebase_auth.dart';
 
 class TestUser {
@@ -5,12 +7,13 @@ class TestUser {
   final String email;
   final String photoUrl;
   final String password = ",*13245a,";
+  static int errorCount = 0;
+  static int successCount = 0;
   String? uid;
   TestUser({required this.displayName, required this.email, required this.photoUrl});
 }
 
 class Test {
-  static const String test = 'test';
   static List<TestUser> users = [
     TestUser(displayName: 'Apple', email: 'apple@test-user.com', photoUrl: 'https://picsum.photos/id/1/200/200'),
     TestUser(displayName: 'Banana', email: 'banana@test-user.com', photoUrl: 'https://picsum.photos/id/1/200/200'),
@@ -28,17 +31,35 @@ class Test {
           await FirebaseAuth.instance.signInWithEmailAndPassword(email: user.email, password: user.password);
       return cred.user!;
     } catch (e) {
-      print(e);
+      log(e.toString());
       final cred = await FirebaseAuth.instance.createUserWithEmailAndPassword(email: user.email, password: user.password);
       return cred.user!;
     }
   }
 
-  static ok(bool cond, [String? reason]) async {
+  /// Test login
+  static Future<User> login(TestUser user) async {
+    final UserCredential cred =
+        await FirebaseAuth.instance.signInWithEmailAndPassword(email: user.email, password: user.password);
+    return cred.user!;
+  }
+
+  /// wait
+  static Future<void> wait() async {
+    await Future.delayed(const Duration(milliseconds: 200));
+  }
+
+  static test(bool cond, [String? reason]) async {
     if (cond) {
-      print('--> OK');
+      TestUser.successCount++;
+      log('--> OK [${TestUser.successCount}]: $reason');
     } else {
-      print('--> ERROR: $reason');
+      TestUser.errorCount++;
+      log('--> ERROR [${TestUser.errorCount}]: $reason');
     }
   }
+}
+
+test(bool cond, [String? reason]) {
+  Test.test(cond, reason);
 }

@@ -74,7 +74,7 @@ class EasyChat {
     return getRoom(roomId);
   }
 
-  /// Get Chat room if exists, create the chatroom if not exist yet
+  /// Get Chat room if exists, or create the chatroom if not exist yet and return it.
   Future<ChatRoomModel> getOrCreateSingleChatRoom(String uid) async {
     try {
       return await EasyChat.instance.getSingleChatRoom(uid);
@@ -133,8 +133,11 @@ class EasyChat {
     return await addUserToRoom(room: room, userUid: uid);
   }
 
+  /// Add user to room
   Future<ChatRoomModel> addUserToRoom({required ChatRoomModel room, required String userUid}) async {
-    if (room.users.length >= (room.maximumNoOfUsers ?? room.users.length + 1)) return room; // TODO how do we show error message
+    if (room.users.length >= (room.maximumNoOfUsers ?? room.users.length + 1)) {
+      throw EasyChatException('room-is-full', 'The room is full');
+    }
     await roomDoc(room.id).update({
       'users': FieldValue.arrayUnion([userUid])
     });

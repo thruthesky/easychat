@@ -40,3 +40,5 @@ export 'src/widgets/chat_room_file_upload_bottom_sheet.dart';
 
 export 'src/functions.dart';
 export 'src/types/file_source.dart';
+
+export 'src/easychat_exception.dart';

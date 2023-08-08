@@ -26,12 +26,12 @@ class _TestScreenState extends State<TestScreen> {
       }
     }
 
-    for (var e in Test.users) {
-      print(e.uid);
-    }
+    // for (var e in Test.users) {
+    //   print(e.uid);
+    // }
 
-    testNoOfNewMessage();
-    testMaximumNoOfUsers();
+    // testNoOfNewMessage();
+    // testMaximumNoOfUsers();
   }
 
   @override
@@ -68,26 +68,39 @@ class _TestScreenState extends State<TestScreen> {
             ],
           ),
           ElevatedButton(
-            onPressed: () {},
+            onPressed: testAll,
             child: Text('Run all tests', style: TextStyle(color: Colors.red.shade800)),
           ),
           ElevatedButton(
             onPressed: testNoOfNewMessage,
             child: const Text('TEST noOfNewMessage - Apple & Banana'),
           ),
+          ElevatedButton(
+            onPressed: testMaximumNoOfUsers,
+            child: const Text('TEST maximum no of users'),
+          ),
         ],
       ),
     );
   }
 
+  testAll() async {
+    await testNoOfNewMessage();
+    await testMaximumNoOfUsers();
+  }
+
+  /// Test the no of new messages.
+  ///
+  ///
   testNoOfNewMessage() async {
+    //
     await FirebaseAuth.instance.signOut();
 
     // Wait until logout is complete or you may see firestore permission denied error.
-    await Future.delayed(const Duration(milliseconds: 200));
+    await Test.wait();
 
     // Sign in with apple with its password
-    await Test.loginOrRegister(Test.apple);
+    await Test.login(Test.apple);
 
     // Get the room
     final room = await EasyChat.instance.getOrCreateSingleChatRoom(Test.banana.uid);
@@ -103,7 +116,7 @@ class _TestScreenState extends State<TestScreen> {
     // Get the no of new messages.
     final roomAfter = await EasyChat.instance.getOrCreateSingleChatRoom(Test.banana.uid);
 
-    Test.ok(roomAfter.noOfNewMessages[Test.banana.uid] == 1,
+    test(roomAfter.noOfNewMessages[Test.banana.uid] == 1,
         "noOfNewMessages of Banana must be 1. Actual value: ${roomAfter.noOfNewMessages[Test.banana.uid]}");
 
     // Send a message with the room information.
@@ -115,7 +128,7 @@ class _TestScreenState extends State<TestScreen> {
     // Get the no of new messages.
     final roomAfter2 = await EasyChat.instance.getOrCreateSingleChatRoom(Test.banana.uid);
 
-    Test.ok(roomAfter2.noOfNewMessages[Test.banana.uid] == 2,
+    test(roomAfter2.noOfNewMessages[Test.banana.uid] == 2,
         "noOfNewMessages of Banana must be 2. Actual value: ${roomAfter.noOfNewMessages[Test.banana.uid]}");
   }
 
@@ -123,10 +136,10 @@ class _TestScreenState extends State<TestScreen> {
     await FirebaseAuth.instance.signOut();
 
     // Wait until logout is complete or you may see firestore permission denied error.
-    await Future.delayed(const Duration(milliseconds: 200));
+    await Test.wait();
 
     // Sign in with apple with its password
-    await Test.loginOrRegister(Test.apple);
+    await Test.login(Test.apple);
 
     // Get the room
     ChatRoomModel room = await EasyChat.instance.createChatRoom(roomName: 'Testing Room');
@@ -138,13 +151,22 @@ class _TestScreenState extends State<TestScreen> {
     room = await EasyChat.instance.inviteUser(room: room, userUid: Test.banana.uid);
     room = await EasyChat.instance.inviteUser(room: room, userUid: Test.cherry.uid);
 
-    // THis should not work because the max is 3
-    room = await EasyChat.instance.inviteUser(room: room, userUid: Test.durian.uid);
+    // This should not work because the max is 3
+    try {
+      await EasyChat.instance.inviteUser(room: room, userUid: Test.durian.uid);
+    } on EasyChatException catch (e) {
+      print(e);
+      test(e.code == 'room-is-full',
+          'maximumNoOfUsers must be limited to 3. Actual value: ${room.users.length}. Expected: ${room.maximumNoOfUsers}');
+      return;
+    }
 
-    // Get the room
-    final roomAfter = await EasyChat.instance.getRoom(room.id);
+    test(false, 'Must fails on testMaximumNoOfUsers');
 
-    Test.ok(roomAfter.users.length == 3,
-        "maximumNoOfUsers must be limited to 3. Actual value: ${roomAfter.users.length}. Expected: ${roomAfter.maximumNoOfUsers}");
+    // // Get the room
+    // final roomAfter = await EasyChat.instance.getRoom(room.id);
+
+    // test(roomAfter.users.length == 3,
+    //     "maximumNoOfUsers must be limited to 3. Actual value: ${roomAfter.users.length}. Expected: ${roomAfter.maximumNoOfUsers}");
   }
 }
