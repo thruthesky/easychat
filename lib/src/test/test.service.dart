@@ -39,8 +39,15 @@ class Test {
 
   /// Test login
   static Future<User> login(TestUser user) async {
+    //
+    await FirebaseAuth.instance.signOut();
+
+    // Wait until logout is complete or you may see firestore permission denied error.
+    await Test.wait();
+
     final UserCredential cred =
         await FirebaseAuth.instance.signInWithEmailAndPassword(email: user.email, password: user.password);
+    await Test.wait();
     return cred.user!;
   }
 
@@ -57,6 +64,18 @@ class Test {
       TestUser.errorCount++;
       log('--> ERROR [${TestUser.errorCount}]: $reason');
     }
+  }
+
+  static start() {
+    TestUser.successCount = 0;
+    TestUser.errorCount = 0;
+    log('------------------- TEST START --------------------');
+  }
+
+  static report() {
+    log('------------------- TEST REPORT -------------------');
+    log('Success: ${TestUser.successCount}');
+    log('Error: ${TestUser.errorCount}');
   }
 }
 

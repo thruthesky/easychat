@@ -90,39 +90,56 @@ class EasyChat {
     return ChatRoomModel.fromDocumentSnapshot(snapshot);
   }
 
-  /// Create chat room
+  /// Creates a chat room and returns the chat room.
   ///
-  /// If [otherUserUid] is set, it is a 1:1 chat. If it is unset, it's a group chat.
+  /// [otherUserUid] If [otherUserUid] is set, it will create a 1:1 chat. Or it will create a group chat.
+  /// [isOpen] If [isOpen] is set, it will create an open chat room. Or it will create a private chat room.
+  /// [roomName] If [roomName] is set, it will create a chat room with the given name. Or it will create a chat room with empty name.
+  /// [maximumNoOfUsers] If [maximumNoOfUsers] is set, it will create a chat room with the given maximum number of users. Or it will create a chat room with no limit.
   Future<ChatRoomModel> createChatRoom({
     String? roomName,
     String? otherUserUid,
     bool isOpen = false,
+    int? maximumNoOfUsers,
   }) async {
-    // prepare
-    String myUid = FirebaseAuth.instance.currentUser!.uid;
-    bool isSingleChat = otherUserUid != null;
-    bool isGroupChat = !isSingleChat;
-    List<String> users = [myUid];
-    if (isSingleChat) users.add(otherUserUid);
+    // // prepare
+    // String myUid = FirebaseAuth.instance.currentUser!.uid;
+    // bool isSingleChat = otherUserUid != null;
+    // bool isGroupChat = !isSingleChat;
+    // List<String> users = [myUid];
+    // if (isSingleChat) users.add(otherUserUid);
 
-    // room data
-    final roomData = {
-      'master': myUid,
-      'name': roomName ?? '',
-      'createdAt': FieldValue.serverTimestamp(),
-      'group': isGroupChat,
-      'open': isOpen,
-      'users': users,
-      'lastMessage': {
-        'createdAt': FieldValue.serverTimestamp(),
-        // TODO make a protocol
-      }
-    };
+    // // room data
+    // final roomData = {
+    //   'master': myUid,
+    //   'name': roomName ?? '',
+    //   'createdAt': FieldValue.serverTimestamp(),
+    //   'group': isGroupChat,
+    //   'open': isOpen,
+    //   'users': users,
+    //   'lastMessage': {
+    //     'createdAt': FieldValue.serverTimestamp(),
+    //     // TODO make a protocol
+    //   }
+    // };
 
     // chat room id
-    final roomId = isSingleChat ? getSingleChatRoomId(otherUserUid) : chatCol.doc().id;
-    await chatCol.doc(roomId).set(roomData);
-    return ChatRoomModel.fromMap(map: roomData, id: roomId);
+    // final roomId = isSingleChat ? getSingleChatRoomId(otherUserUid) : chatCol.doc().id;
+
+    // final ( roomId, roomData ) = ChatRoomModel.toCreate(
+    //   roomName: roomName,
+    //   otherUserUid: otherUserUid,
+    //   isOpen: isOpen,
+    // );
+    // await chatCol.doc(roomId).set(roomData);
+    // return ChatRoomModel.fromMap(map: roomData, id: roomId);
+
+    return ChatRoomModel.create(
+      roomName: roomName,
+      otherUserUid: otherUserUid,
+      isOpen: isOpen,
+      maximumNoOfUsers: maximumNoOfUsers,
+    );
   }
 
   Future<ChatRoomModel> inviteUser({required ChatRoomModel room, required String userUid}) async {

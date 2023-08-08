@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:easychat/easychat.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class ChatRoomModel {
   final String id;
@@ -73,6 +74,41 @@ class ChatRoomModel {
       'noOfNewMessages': noOfNewMessages,
       'maximumNoOfUsers': maximumNoOfUsers,
     };
+  }
+
+  ///
+  static Future<ChatRoomModel> create({
+    String? roomName,
+    String? otherUserUid,
+    bool isOpen = false,
+    int? maximumNoOfUsers,
+  }) async {
+    // prepare
+    String myUid = FirebaseAuth.instance.currentUser!.uid;
+    bool isSingleChat = otherUserUid != null;
+    bool isGroupChat = !isSingleChat;
+    List<String> users = [myUid];
+    if (isSingleChat) users.add(otherUserUid);
+
+    // room data
+    final roomData = {
+      'master': myUid,
+      'name': roomName ?? '',
+      'createdAt': FieldValue.serverTimestamp(),
+      'group': isGroupChat,
+      'open': isOpen,
+      'users': users,
+      'maximumNoOfUsers': maximumNoOfUsers ?? (isSingleChat ? 2 : 100),
+      'lastMessage': {
+        'createdAt': FieldValue.serverTimestamp(),
+        // TODO make a protocol
+      }
+    };
+
+    final roomId = isSingleChat ? EasyChat.instance.getSingleChatRoomId(otherUserUid) : EasyChat.instance.chatCol.doc().id;
+
+    await EasyChat.instance.chatCol.doc(roomId).set(roomData);
+    return ChatRoomModel.fromMap(map: roomData, id: roomId);
   }
 
   @override
