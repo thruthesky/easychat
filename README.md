@@ -412,4 +412,8 @@ updatedRoom = await EasyChat.instance.updateRoomSetting(
 
 ## How to add easychat into your project as a collaborator
 
-% flutter create philov
+```sh
+% flutter create [projectName]
+% cd [projectName]
+% flutter run
+```

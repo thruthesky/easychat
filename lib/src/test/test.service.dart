@@ -114,6 +114,7 @@ class Test {
   }
 }
 
+/// Test
 test(bool cond, [String? reason]) {
   Test.test(cond, reason);
 }
