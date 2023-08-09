@@ -414,6 +414,8 @@ updatedRoom = await EasyChat.instance.updateRoomSetting(
 
 * Note only the master need to as it as subtree.
 
+* Add `easychat` as `git subtree` like below. Note that this is for package developers only.
+
 ```sh
 % flutter create [projectName]
 % cd [projectName]
@@ -423,4 +425,45 @@ updatedRoom = await EasyChat.instance.updateRoomSetting(
 % git push -f -u origin main
 % git remote add easychat https://github.com/thruthesky/easychat
 % git subtree add --prefix lib/easychat easychat main
+% flutterfire configure
+% flutter pub add firebase_core
+% flutter pub add firebase_auth
+% flutter pub add firebase_storage
+% flutter pub add firebase_ui_firestore
+```
+
+* Add the `easychat` package like below.
+
+```yaml
+  easychat:
+    path: lib/easychat
+```
+
+* Initialize firebase like below.
+
+```dart
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+  runApp(const MyApp());
+}
+```
+
+* Use the `TestUi` like below.
+
+```dart
+class _MyHomePageState extends State<MyHomePage> {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+        title: Text(widget.title),
+      ),
+      body: TestUi(),
+    );
+  }
+}
 ```
