@@ -95,6 +95,14 @@ class _TestScreenState extends State<TestUi> {
           onPressed: testCreateSingleChatRoom,
           child: const Text('TEST - create single chat room'),
         ),
+        ElevatedButton(
+          onPressed: testInviteUserIntoSingleChat,
+          child: const Text('TEST - invite user into single chat'),
+        ),
+        ElevatedButton(
+          onPressed: testInviteUserIntoGroupChat,
+          child: const Text('TEST - invite user into group chat'),
+        ),
       ],
     );
   }
@@ -105,6 +113,8 @@ class _TestScreenState extends State<TestUi> {
     await testNoOfNewMessage();
     await testMaximumNoOfUsers();
     await testCreateSingleChatRoom();
+    await testInviteUserIntoSingleChat();
+    await testInviteUserIntoGroupChat();
     Test.report();
   }
 
@@ -136,6 +146,21 @@ class _TestScreenState extends State<TestUi> {
     test(room.maximumNoOfUsers == 2, 'Must have maximumNoOfUsers 2');
     test(room.blockedUsers.isEmpty, 'Must have no blockedUsers');
     test(room.noOfNewMessages.isEmpty, 'Must have no noOfNewMessages');
+  }
+
+  testInviteUserIntoSingleChat() async {
+    await Test.login(Test.apple);
+    final room = await EasyChat.instance.createChatRoom(roomName: 'Single Room 2', otherUserUid: Test.banana.uid);
+    await Test.assertExceptionCode(room.invite(Test.cherry.uid), EasyChatCode.singleChatRoomCannotInvite);
+  }
+
+  testInviteUserIntoGroupChat() async {
+    await Test.login(Test.apple);
+    final room = await EasyChat.instance.createChatRoom(roomName: 'Single Room 2', maximumNoOfUsers: 3);
+    await Test.assertFuture(room.invite(Test.banana.uid));
+    await Test.assertFuture(room.invite(Test.cherry.uid));
+    await Test.assertExceptionCode(room.invite(Test.cherry.uid), EasyChatCode.userAlreadyInRoom);
+    await Test.assertExceptionCode(room.invite(Test.durian.uid), EasyChatCode.roomIsFull);
   }
 
   /// Test the no of new messages.
@@ -191,18 +216,11 @@ class _TestScreenState extends State<TestUi> {
     room = await EasyChat.instance.updateRoomSetting(room: room, setting: 'maximumNoOfUsers', value: 3);
 
     // add the users
-    room = await EasyChat.instance.inviteUser(room: room, userUid: Test.banana.uid);
-    room = await EasyChat.instance.inviteUser(room: room, userUid: Test.cherry.uid);
+    await room.invite(Test.banana.uid);
+    await room.invite(Test.cherry.uid);
 
     // This should not work because the max is 3
-    try {
-      await EasyChat.instance.inviteUser(room: room, userUid: Test.durian.uid);
-      test(false, 'Must fails on testMaximumNoOfUsers');
-    } on EasyChatException catch (e) {
-      // e is the exception
-      test(e.code == 'room-is-full',
-          'maximumNoOfUsers must be limited to 3. Actual value: ${room.users.length}. Expected: ${room.maximumNoOfUsers}');
-    }
+    await Test.assertExceptionCode(room.invite(Test.durian.uid), EasyChatCode.roomIsFull);
 
     // Get the room
     final roomAfter = await EasyChat.instance.getRoom(room.id);

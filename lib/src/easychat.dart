@@ -85,6 +85,7 @@ class EasyChat {
     }
   }
 
+  /// Returns a chat room module with the given chat room id.
   Future<ChatRoomModel> getRoom(String roomId) async {
     final snapshot = await roomDoc(roomId).get();
     return ChatRoomModel.fromDocumentSnapshot(snapshot);
@@ -102,38 +103,6 @@ class EasyChat {
     bool isOpen = false,
     int? maximumNoOfUsers,
   }) async {
-    // // prepare
-    // String myUid = FirebaseAuth.instance.currentUser!.uid;
-    // bool isSingleChat = otherUserUid != null;
-    // bool isGroupChat = !isSingleChat;
-    // List<String> users = [myUid];
-    // if (isSingleChat) users.add(otherUserUid);
-
-    // // room data
-    // final roomData = {
-    //   'master': myUid,
-    //   'name': roomName ?? '',
-    //   'createdAt': FieldValue.serverTimestamp(),
-    //   'group': isGroupChat,
-    //   'open': isOpen,
-    //   'users': users,
-    //   'lastMessage': {
-    //     'createdAt': FieldValue.serverTimestamp(),
-    //     // TODO make a protocol
-    //   }
-    // };
-
-    // chat room id
-    // final roomId = isSingleChat ? getSingleChatRoomId(otherUserUid) : chatCol.doc().id;
-
-    // final ( roomId, roomData ) = ChatRoomModel.toCreate(
-    //   roomName: roomName,
-    //   otherUserUid: otherUserUid,
-    //   isOpen: isOpen,
-    // );
-    // await chatCol.doc(roomId).set(roomData);
-    // return ChatRoomModel.fromMap(map: roomData, id: roomId);
-
     return ChatRoomModel.create(
       roomName: roomName,
       otherUserUid: otherUserUid,
@@ -142,22 +111,29 @@ class EasyChat {
     );
   }
 
+  @Deprecated('Use room.invite() instead')
   Future<ChatRoomModel> inviteUser({required ChatRoomModel room, required String userUid}) async {
-    return await addUserToRoom(room: room, userUid: userUid);
+    // return await addUserToRoom(room: room, userUid: userUid);
+    return await room.invite(userUid);
   }
 
+  @Deprecated('Use room.join() instead')
   Future<ChatRoomModel> joinRoom({required ChatRoomModel room}) async {
-    return await addUserToRoom(room: room, userUid: uid);
+    // return await addUserToRoom(room: room, userUid: uid);
+    return await room.join();
   }
 
   /// Add user to room
+  @Deprecated('Use room.addUser() instead')
   Future<ChatRoomModel> addUserToRoom({required ChatRoomModel room, required String userUid}) async {
-    if (room.users.length >= (room.maximumNoOfUsers ?? room.users.length + 1)) {
-      throw EasyChatException('room-is-full', 'The room is full');
-    }
-    await roomDoc(room.id).update({
-      'users': FieldValue.arrayUnion([userUid])
-    });
+    await room.addUser(userUid);
+
+    // if (room.users.length >= (room.maximumNoOfUsers ?? room.users.length + 1)) {
+    //   throw EasyChatException('room-is-full', 'The room is full');
+    // }
+    // await roomDoc(room.id).update({
+    //   'users': FieldValue.arrayUnion([userUid])
+    // });
     room.users.add(userUid);
     return room.update({'users': room.users});
   }

@@ -62,7 +62,8 @@ class Test {
       log('--> OK [${TestUser.successCount}]: $reason');
     } else {
       TestUser.errorCount++;
-      log('--> ERROR [${TestUser.errorCount}]: $reason');
+      log('====>>>> ERROR [${TestUser.errorCount}]: $reason');
+      log(StackTrace.current.toString());
     }
   }
 
@@ -76,6 +77,27 @@ class Test {
     log('------------------- TEST REPORT -------------------');
     log('Success: ${TestUser.successCount}');
     log('Error: ${TestUser.errorCount}');
+  }
+
+  static Future<void> assertExceptionCode(Future future, String code) async {
+    try {
+      await future;
+      test(false, 'Exception must be thrown');
+    } catch (e) {
+      if (e.toString().split(': ').last == code) {
+        test(true, 'Exception code must be $code');
+      } else {
+        test(false, 'Exception code must be $code. Actual code: ${e.toString()}');
+      }
+    }
+  }
+
+  static Future<void> assertFuture(Future future) {
+    return future.then((value) {
+      test(true, 'Future must be completed');
+    }).catchError((e) {
+      test(false, 'Future must be completed. Actual exception: $e');
+    });
   }
 }
 

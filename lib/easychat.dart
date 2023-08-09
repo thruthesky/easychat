@@ -44,3 +44,5 @@ export 'src/types/file_source.dart';
 export 'src/easychat_exception.dart';
 export 'src/test/test.service.dart';
 export 'src/test/test.ui.dart';
+
+export 'src/easychat_code.dart';

@@ -2,6 +2,10 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:easychat/easychat.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
+/// ChatRoomModel
+///
+/// This is the model for the chat room.
+/// Don't update the property directly. The property is read-only and if you want to apply the changes, listen to the stream of the chat room document.
 class ChatRoomModel {
   final String id;
   final String name;
@@ -12,7 +16,7 @@ class ChatRoomModel {
   final List<String> moderators;
   final List<String> blockedUsers;
   final Map<String, int> noOfNewMessages;
-  final int? maximumNoOfUsers;
+  final int maximumNoOfUsers;
 
   ChatRoomModel({
     required this.id,
@@ -24,8 +28,14 @@ class ChatRoomModel {
     required this.moderators,
     required this.blockedUsers,
     required this.noOfNewMessages,
-    this.maximumNoOfUsers,
+    required this.maximumNoOfUsers,
   });
+
+  bool get isSingleChat => users.length == 2 && group == false;
+  bool get isGroupChat => group;
+
+  CollectionReference get messagesCol => EasyChat.instance.roomRef(id).collection('messages');
+  DocumentReference get ref => EasyChat.instance.roomRef(id);
 
   factory ChatRoomModel.fromDocumentSnapshot(DocumentSnapshot documentSnapshot) {
     return ChatRoomModel.fromMap(map: documentSnapshot.data() as Map<String, dynamic>, id: documentSnapshot.id);
@@ -46,6 +56,7 @@ class ChatRoomModel {
     );
   }
 
+  @Deprecated("Don't use this. It's useless function. Listen the document instead. Or use replaceWith()")
   update(Map<String, dynamic> updates) {
     return ChatRoomModel(
       id: id,
@@ -76,7 +87,12 @@ class ChatRoomModel {
     };
   }
 
+  /// Creates a chat room and returns the chat room.
   ///
+  /// [otherUserUid] If [otherUserUid] is set, it will create a 1:1 chat. Or it will create a group chat.
+  /// [isOpen] If [isOpen] is set, it will create an open chat room. Or it will create a private chat room.
+  /// [roomName] If [roomName] is set, it will create a chat room with the given name. Or it will create a chat room with empty name.
+  /// [maximumNoOfUsers] If [maximumNoOfUsers] is set, it will create a chat room with the given maximum number of users. Or it will create a chat room with no limit.
   static Future<ChatRoomModel> create({
     String? roomName,
     String? otherUserUid,
@@ -117,5 +133,38 @@ class ChatRoomModel {
   String get otherUserUid {
     assert(users.length == 2 && group == false, "This is not a single chat room");
     return EasyChat.instance.getOtherUserUid(users);
+  }
+
+  /// Add a user to the room.
+  Future<void> addUser(String userUid) async {
+    /// Read the chat room document to check for adding a user. (NSE: Not so expansive)
+    final room = await EasyChat.instance.getRoom(id);
+
+    /// Check if the user is already in the room.
+    if (room.users.contains(userUid)) {
+      throw Exception(EasyChatCode.userAlreadyInRoom);
+    }
+
+    ///
+    ///
+    if (room.users.length >= room.maximumNoOfUsers) {
+      throw Exception(EasyChatCode.roomIsFull);
+    }
+
+    ///
+    await ref.update({
+      'users': FieldValue.arrayUnion([userUid])
+    });
+  }
+
+  invite(String userUid) async {
+    if (isSingleChat) {
+      throw Exception(EasyChatCode.singleChatRoomCannotInvite);
+    }
+    return await addUser(userUid);
+  }
+
+  join() async {
+    return await addUser(FirebaseAuth.instance.currentUser!.uid);
   }
 }
