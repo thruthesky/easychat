@@ -79,6 +79,15 @@ class Test {
     log('Error: ${TestUser.errorCount}');
   }
 
+  /// Error code test
+  ///
+  /// [future] The future that throws an exception. It must throw an exception.
+  /// [code] The exception code that must be thrown. Note that the exception code is the last part of the exception message.
+  ///
+  /// ```dart
+  /// await Test.assertExceptionCode(room.invite(Test.cherry.uid), EasyChatCode.userAlreadyInRoom);
+  /// await Test.assertExceptionCode(room.invite(Test.durian.uid), EasyChatCode.roomIsFull);
+  /// ```
   static Future<void> assertExceptionCode(Future future, String code) async {
     try {
       await future;
@@ -92,6 +101,10 @@ class Test {
     }
   }
 
+  /// Assert future is completed.
+  ///
+  /// [future] The future that must be completed.
+  /// This will test if the future is completed or not.
   static Future<void> assertFuture(Future future) {
     return future.then((value) {
       test(true, 'Future must be completed');

@@ -404,3 +404,12 @@ updatedRoom = await EasyChat.instance.updateRoomSetting(
 
 * We don't do the `unit test`, `widget test`, or `integration test`. Instead, we do `logic test` that is developed by ourselves for our test purpose.
   * You can see the test in `TestScreen`.
+
+
+
+# Developers
+
+
+## How to add easychat into your project as a collaborator
+
+% flutter create philov
