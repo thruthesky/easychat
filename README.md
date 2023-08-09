@@ -410,10 +410,17 @@ updatedRoom = await EasyChat.instance.updateRoomSetting(
 # Developers
 
 
-## How to add easychat into your project as a collaborator
+## How to add the easychat package as subtree into your project as the repo master
+
+* Note only the master need to as it as subtree.
 
 ```sh
 % flutter create [projectName]
 % cd [projectName]
 % flutter run
+% git remote add origin [https://github.com/your-account/project-name]
+% git add . && git commit -m "..."
+% git push -f -u origin main
+% git remote add easychat https://github.com/thruthesky/easychat
+% git subtree add --prefix lib/easychat easychat main
 ```
