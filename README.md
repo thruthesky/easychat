@@ -9,6 +9,7 @@
     - [Features](#features)
   - [Environment](#environment)
   - [Basic Features](#basic-features)
+  - [Example](#example)
   - [Setup](#setup)
     - [Firebase Setup](#firebase-setup)
       - [Firebase Users collection](#firebase-users-collection)
@@ -81,6 +82,11 @@
 * Chat room list
 * 1:1 chat room & multi chat
 * File upload api
+
+
+## Example
+
+* The example is in [easychat_example](https://github.com/thruthesky/easychat_example) repository. Add it in `apps` folder and test it.
 
 ## Setup
 
