@@ -415,6 +415,7 @@ updatedRoom = await EasyChat.instance.updateRoomSetting(
 * Note only the master need to as it as subtree.
 
 * Add `easychat` as `git subtree` like below. Note that this is for package developers only.
+  * Note that, the `easychat` may have its own `subtree` which means, it may have nested subtrees.
 
 ```sh
 % flutter create [projectName]
@@ -430,6 +431,8 @@ updatedRoom = await EasyChat.instance.updateRoomSetting(
 % flutter pub add firebase_auth
 % flutter pub add firebase_storage
 % flutter pub add firebase_ui_firestore
+% flutter pub add cloud_firestore
+% ... add more packages ....
 ```
 
 * Add the `easychat` package like below.
@@ -450,6 +453,8 @@ void main() async {
   runApp(const MyApp());
 }
 ```
+
+* Enable the [easychat security rules](https://github.com/thruthesky/easychat/blob/main/easychat-security-rules/firestore.rules)
 
 * Use the `TestUi` like below.
 
