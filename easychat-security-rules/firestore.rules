@@ -37,6 +37,41 @@ service cloud.firestore {
     match /easychat/{roomId} {
 
       
+
+      function willBeGroupChat() {
+        return request.resource.data.group == true;
+      }
+
+      function willBeSingleChat() {
+        return request.resource.data.group == false;
+      }
+
+      // Return true if master field is not updated.
+      function notUpdatingMaster() {
+        return notUpdating(['master']);
+      }
+
+      // Return true
+      // - if the master is not leaving(removing) from the room.
+      // - if the user does not remove the master from the room.
+      function notRemovingMaster() {
+        return notRemoving('users', resource.data.master);
+      }
+
+
+      // Return true if the user is removing himself from the room.
+      function isLeaving() {
+        return onlyRemoving('users', request.auth.uid);
+      }
+
+      // Return true if the user is adding himself to the room.
+      function isJoining() {
+        return
+          onlyAddingOneElement('users')
+          && 
+          request.resource.data.users.toSet().difference(resource.data.users.toSet()) == [request.auth.uid].toSet();
+      }
+
       //
       function isMaster() {
         return  resource.data.master == request.auth.uid;
@@ -138,13 +173,6 @@ function required(fields) {
   return request.resource.data.keys().hasAll( fields );
 }
 
-function willBeGroupChat() {
-  return request.resource.data.group == true;
-}
-
-function willBeSingleChat() {
-  return request.resource.data.group == false;
-}
 
 // Returns the number of users in the room AFTER save. Count without uinique uids.
 // ! After save
@@ -199,35 +227,9 @@ function onlyRemoving(arryField, element) {
   ;
 }
 
-// Return true if master field is not updated.
-function notUpdatingMaster() {
-  return notUpdating(['master']);
-}
-
-// Return true
-// - if the master is not leaving(removing) from the room.
-// - if the user does not remove the master from the room.
-function notRemovingMaster() {
-  return notRemoving('users', resource.data.master);
-}
-
-
-// Return true if the user is removing himself from the room.
-function isLeaving() {
-  return onlyRemoving('users', request.auth.uid);
-}
-
-// Return true if the user is adding himself to the room.
-function isJoining() {
-  return
-    onlyAddingOneElement('users')
-    && 
-    request.resource.data.users.toSet().difference(resource.data.users.toSet()) == [request.auth.uid].toSet();
-}
-
 
 // If the user is disabled by the admin in Firebase Auth, they cannot login and they don't have request.auth.uid.
 // So, no need to check if the user is disabled.
-function isDisabled() {
-  return true;
-}
+// function isDisabled() {
+//   return true;
+// }
