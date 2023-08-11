@@ -14,8 +14,9 @@
     - [Firebase Setup](#firebase-setup)
       - [Firebase Users collection](#firebase-users-collection)
       - [Firestore Security Rules](#firestore-security-rules)
-  - [Widgets and Logics](#widgets-and-logics)
+  - [Widgets](#widgets)
     - [Create a chat room](#create-a-chat-room)
+    - [How to display a chat room](#how-to-display-a-chat-room)
     - [Additional information](#additional-information)
     - [How to test \& UI work Chat room screen](#how-to-test--ui-work-chat-room-screen)
   - [Firebase](#firebase)
@@ -118,7 +119,9 @@ EasyChat.instance.initialize(usersCollection: 'users', displayNameField: 'displa
  ... security rules here ...
 ```
 
-## Widgets and Logics
+## Widgets
+
+* In this chapter, the usage of the widgets is explained.
 
 ### Create a chat room
 
@@ -158,6 +161,18 @@ Scafolld(
   )
 )
 ```
+
+### How to display a chat room
+
+* In the chat room, there should be a header, a message list view as a body, and message input box.
+* To display the chat room, you need to have a chat room model.
+  * To have a chat room model, you need to create a chat room (probably a group chat).
+  * Then, you will get it on the app by accessing the database or you may compose it using `ChatRoomModel.fromMap()`.
+  * Then, pass the chat room model into the chat room (or you can compose a chat room manually with the chat room model.)
+
+
+
+
 
 ### Additional information
 
