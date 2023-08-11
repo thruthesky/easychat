@@ -68,8 +68,9 @@ class _TestScreenState extends State<TestUi> {
             for (final user in Test.users)
               ElevatedButton(
                 onPressed: () async {
-                  final login = await Test.loginOrRegister(user);
-                  print(login);
+                  // final login =
+                  await Test.loginOrRegister(user);
+                  // print(login);
                 },
                 child: Text('Login w/ ${user.displayName}'),
               ),
@@ -135,8 +136,7 @@ class _TestScreenState extends State<TestUi> {
 
   testCreateSingleChatRoom() async {
     await Test.login(Test.apple);
-    final room = await EasyChat.instance
-        .createChatRoom(roomName: 'Single Room 2', otherUserUid: Test.banana.uid);
+    final room = await EasyChat.instance.createChatRoom(roomName: 'Single Room 2', otherUserUid: Test.banana.uid);
     test(room.name == 'Single Room 2', 'Must be Single Room 2');
     test(room.group == false, 'Must be a single chat room');
     test(room.open == false, 'Must be a private a chat room');
@@ -151,16 +151,13 @@ class _TestScreenState extends State<TestUi> {
 
   testInviteUserIntoSingleChat() async {
     await Test.login(Test.apple);
-    final room = await EasyChat.instance
-        .createChatRoom(roomName: 'Single Room 2', otherUserUid: Test.banana.uid);
-    await Test.assertExceptionCode(
-        room.invite(Test.cherry.uid), EasyChatCode.singleChatRoomCannotInvite);
+    final room = await EasyChat.instance.createChatRoom(roomName: 'Single Room 2', otherUserUid: Test.banana.uid);
+    await Test.assertExceptionCode(room.invite(Test.cherry.uid), EasyChatCode.singleChatRoomCannotInvite);
   }
 
   testInviteUserIntoGroupChat() async {
     await Test.login(Test.apple);
-    final room =
-        await EasyChat.instance.createChatRoom(roomName: 'Single Room 2', maximumNoOfUsers: 3);
+    final room = await EasyChat.instance.createChatRoom(roomName: 'Single Room 2', maximumNoOfUsers: 3);
     await Test.assertFuture(room.invite(Test.banana.uid));
     await Test.assertFuture(room.invite(Test.cherry.uid));
     await Test.assertExceptionCode(room.invite(Test.cherry.uid), EasyChatCode.userAlreadyInRoom);
@@ -217,8 +214,7 @@ class _TestScreenState extends State<TestUi> {
     ChatRoomModel room = await EasyChat.instance.createChatRoom(roomName: 'Testing Room');
 
     // update the setting
-    room = await EasyChat.instance
-        .updateRoomSetting(room: room, setting: 'maximumNoOfUsers', value: 3);
+    room = await EasyChat.instance.updateRoomSetting(room: room, setting: 'maximumNoOfUsers', value: 3);
 
     // add the users
     await room.invite(Test.banana.uid);
