@@ -1,6 +1,16 @@
+<<<<<<< HEAD
 .DS_Store
 
 apps
+=======
+
+
+service-account.json
+**/service-account.json
+keys/
+**/keys/
+
+>>>>>>> ea2e335 (Squashed 'easy-extension/' changes from 5c912df..70994d8)
 
 # Logs
 logs
@@ -44,6 +54,7 @@ bower_components
 
 # node-waf configuration
 .lock-wscript
+
 
 # Compiled binary addons (http://nodejs.org/api/addons.html)
 build/Release

@@ -46,7 +46,14 @@
 
 ## Overview
 
+<<<<<<< HEAD
 ### Principle of Design
+=======
+- This firebase extension helps to manage your firebase.
+
+- When a document is created under the `easy-commands` collection,
+  - The firebase background function will execute the comamnd specified in `{ command: ... }`.
+>>>>>>> ea2e335 (Squashed 'easy-extension/' changes from 5c912df..70994d8)
 
 * Easychat provides logic as much as possible. This means, the app must provide UI and hook the user event with the easychat logic.
   * In some case, easychat must provide ui like displaying the list of chat friend list or chat room and message list. But still easychaht provides a way to customise everything.
@@ -84,12 +91,22 @@
 * 1:1 chat room & multi chat
 * File upload api
 
+<<<<<<< HEAD
 
 ## Example
+=======
+## Installation
+>>>>>>> ea2e335 (Squashed 'easy-extension/' changes from 5c912df..70994d8)
 
 * The example is in [easychat_example](https://github.com/thruthesky/easychat_example) repository. Add it in `apps` folder and test it.
 
+<<<<<<< HEAD
 ## Setup
+=======
+
+- [Beta (0.1.0-beta.0)](https://console.firebase.google.com/project/_/extensions/install?ref=jaehosong/easy-extension@0.1.0-beta.0)
+- [Alpha (0.0.21-alpha.1)](https://console.firebase.google.com/u/0/project/_/extensions/install?ref=jaehosong%2Feasy-extension@0.0.22-alpha.0)
+>>>>>>> ea2e335 (Squashed 'easy-extension/' changes from 5c912df..70994d8)
 
 ### Firebase Setup
 
@@ -105,8 +122,70 @@
   * Easychat needs displayName and photoUrl in the collection.
   * Set the user's information like below.
 
+<<<<<<< HEAD
 ```dart
 EasyChat.instance.initialize(usersCollection: 'users', displayNameField: 'displayName', photoUrlField: 'photoUrl')
+=======
+
+
+
+* listen `eventarc` and update it into a document. For instance, after image processing, listen the event and update it on a document.
+
+### Updating auth custom claims
+
+- Required properties
+  - `{ command: 'update_custom_claims' }` - the command.
+  - `{ uid: 'xxx' }` - the user's uid that the claims will be applied to.
+  - `{ claims: { key: value, xxx: xxx, ... } }` - other keys and values for the claims.
+
+- example of document creation for update_custom claims
+
+
+![Image Link](https://github.com/thruthesky/easy-extension/blob/main/docs/command-update_custom_claims_input.jpg?raw=true "This is image title")
+
+
+- Response
+  - `{ config: ... }` - the configuration of the extension
+  - `{ response: { status: 'success' } }` - success respones
+  - `{ response: { timestamp: xxxx } }` - the time that the executino had finished.
+  - `{ response: { claims: { ..., ... } } }` - the claims that the user currently has. Not the claims that were requested for updating.
+
+
+![Image Link](https://github.com/thruthesky/easy-extension/blob/main/docs/command-update_custom_claims_output.jpg?raw=true "This is image title")
+
+
+
+- `SYNC_CUSTOM_CLAIMS_TO_USER_DOCUMENT` option only works with `update_custom_claims` command.
+  - When it is set to `yes`, the claims of the user will be set to user's document.
+  - By knowing user's custom claims,
+    - the app can know that if the user is admin or not.
+      - If the user is admin, then the app can show admin menu to the user.
+    - Security rules can work better.
+
+
+
+
+### Disable user
+
+- Disabling a user means that they can't sign in anymore, nor refresh their ID token. In practice this means that within an hour of disabling the user they can no longer have a request.auth.uid in your security rules.
+  - If you wish to block the user immediately, I recommend to run another command. Running `update_custom_claims` comand with `{ disabled: true }` and you can add it on security rules.
+  - Additionally, you can enable `set enable field on user document` to yes. This will add `disabled` field on user documents and you can search(list) users who are disabled.
+
+
+
+- `SET_DISABLED_USER_FIELD` option only works with `disable_user` command.
+  - When it is set to yes, the `disabled` field with `true` will be set to user document.
+  - Use this to know if the user is disabled.
+
+
+- Request
+
+```ts
+{
+  command: 'delete_user',
+  uid: '--user-uid--',
+}
+>>>>>>> ea2e335 (Squashed 'easy-extension/' changes from 5c912df..70994d8)
 ```
 
 * Warning! Once a user changes his displayName and photoUrl, `EasyChat.instance.updateUser()` must be called to update user information in easychat.
@@ -497,4 +576,76 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 }
+<<<<<<< HEAD
 ```
+=======
+```
+
+- For wrong command, error like below will happen
+
+```ts
+{
+  command: 'wrong-command',
+  response: {
+    code: 'execution/command-not-found',
+    message: 'command execution error',
+    status: 'error',
+    timestamp: Timestamp { _seconds: 1690097695, _nanoseconds: 194000000 }
+  }
+}
+```
+
+
+## Deploy
+
+
+- To deploy to functions, run the command below.
+  - `npm run deploy`
+
+
+## Unit Testing
+
+
+### Testing on Local Emulators
+
+- We do unit testing on local emulator and on real Firebase.
+
+- To test the input of the configuration based on extension.yaml, run the following
+  - `cd functions/integration_tests && firebase emulators:start`
+  - You can open `https://localhost:4000` to see everything works fine especially with the configuration of `*.env` based on the `extension.yaml` settings.
+
+
+### Testing on real Firebase
+
+- Test files are under `functions/tests`. This test files work with real Firebase. So, you may need provide a Firebase for test use.
+  - You can run the emulator on the same folder where `functions/firebase.json` resides, and run the tests on the same folder.
+
+- To run the sample test,
+  - `npm run test:index`
+
+
+- To run all the tests
+  - `npm run test`
+
+
+- To run a test by specifying a test script,
+  - `npm run mocha -- tests/**/*.ts`
+  - `npm run mocha -- tests/update_custom_claims/get_set.spec.ts`
+  - `npm run mocha -- tests/update_custom_claims/update.spec.ts`
+
+
+
+## Tips
+
+- If you want, you can add `timestamp` field for listing.
+
+
+
+## Security rules
+
+- The `/easy-commands` collection should be protected by the admin users.
+- See the [sample security rules](https://github.com/easy-extension/firestore.rules) that you may copy and use for the seurity rules of easy-extension.
+
+
+
+>>>>>>> ea2e335 (Squashed 'easy-extension/' changes from 5c912df..70994d8)
