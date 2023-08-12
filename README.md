@@ -642,10 +642,3 @@ class _MyHomePageState extends State<MyHomePage> {
 - See the [sample security rules](https://github.com/easy-extension/firestore.rules) that you may copy and use for the seurity rules of easy-extension.
 
 
-
-<<<<<<< HEAD
->>>>>>> ea2e335 (Squashed 'easy-extension/' changes from 5c912df..70994d8)
-=======
-
-...// aug 9
->>>>>>> 0277439 (update on aug 9)
