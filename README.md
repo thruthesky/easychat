@@ -14,6 +14,8 @@
   - [Setup](#setup)
     - [Firebase Setup](#firebase-setup)
       - [Firebase Users collection](#firebase-users-collection)
+    - [Updating auth custom claims](#updating-auth-custom-claims)
+    - [Disable user](#disable-user)
       - [Firestore Security Rules](#firestore-security-rules)
   - [Widgets](#widgets)
     - [Create a chat room](#create-a-chat-room)
@@ -124,8 +126,7 @@
 
 ```dart
 EasyChat.instance.initialize(usersCollection: 'users', displayNameField: 'displayName', photoUrlField: 'photoUrl')
-
-
+```
 
 * listen `eventarc` and update it into a document. For instance, after image processing, listen the event and update it on a document.
 
@@ -573,9 +574,6 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 }
-<<<<<<< HEAD
-```
-=======
 ```
 
 - For wrong command, error like below will happen
@@ -642,5 +640,4 @@ class _MyHomePageState extends State<MyHomePage> {
 
 - The `/easy-commands` collection should be protected by the admin users.
 - See the [sample security rules](https://github.com/easy-extension/firestore.rules) that you may copy and use for the seurity rules of easy-extension.
-
 
