@@ -10,6 +10,7 @@
   - [Environment](#environment)
   - [Basic Features](#basic-features)
   - [Example](#example)
+  - [Installation](#installation)
   - [Setup](#setup)
     - [Firebase Setup](#firebase-setup)
       - [Firebase Users collection](#firebase-users-collection)
@@ -36,6 +37,12 @@
   - [Run the Logic Test](#run-the-logic-test)
 - [Developers](#developers)
   - [How to add the easychat package as subtree into your project as the repo master](#how-to-add-the-easychat-package-as-subtree-into-your-project-as-the-repo-master)
+  - [Deploy](#deploy)
+  - [Unit Testing](#unit-testing)
+    - [Testing on Local Emulators](#testing-on-local-emulators)
+    - [Testing on real Firebase](#testing-on-real-firebase)
+  - [Tips](#tips)
+  - [Security rules](#security-rules-1)
 
 ## TODO
 
@@ -46,14 +53,11 @@
 
 ## Overview
 
-<<<<<<< HEAD
 ### Principle of Design
-=======
 - This firebase extension helps to manage your firebase.
 
 - When a document is created under the `easy-commands` collection,
   - The firebase background function will execute the comamnd specified in `{ command: ... }`.
->>>>>>> ea2e335 (Squashed 'easy-extension/' changes from 5c912df..70994d8)
 
 * Easychat provides logic as much as possible. This means, the app must provide UI and hook the user event with the easychat logic.
   * In some case, easychat must provide ui like displaying the list of chat friend list or chat room and message list. But still easychaht provides a way to customise everything.
@@ -91,22 +95,16 @@
 * 1:1 chat room & multi chat
 * File upload api
 
-<<<<<<< HEAD
 
 ## Example
-=======
 ## Installation
->>>>>>> ea2e335 (Squashed 'easy-extension/' changes from 5c912df..70994d8)
 
 * The example is in [easychat_example](https://github.com/thruthesky/easychat_example) repository. Add it in `apps` folder and test it.
 
-<<<<<<< HEAD
 ## Setup
-=======
 
 - [Beta (0.1.0-beta.0)](https://console.firebase.google.com/project/_/extensions/install?ref=jaehosong/easy-extension@0.1.0-beta.0)
 - [Alpha (0.0.21-alpha.1)](https://console.firebase.google.com/u/0/project/_/extensions/install?ref=jaehosong%2Feasy-extension@0.0.22-alpha.0)
->>>>>>> ea2e335 (Squashed 'easy-extension/' changes from 5c912df..70994d8)
 
 ### Firebase Setup
 
@@ -122,10 +120,8 @@
   * Easychat needs displayName and photoUrl in the collection.
   * Set the user's information like below.
 
-<<<<<<< HEAD
 ```dart
 EasyChat.instance.initialize(usersCollection: 'users', displayNameField: 'displayName', photoUrlField: 'photoUrl')
-=======
 
 
 
@@ -185,7 +181,6 @@ EasyChat.instance.initialize(usersCollection: 'users', displayNameField: 'displa
   command: 'delete_user',
   uid: '--user-uid--',
 }
->>>>>>> ea2e335 (Squashed 'easy-extension/' changes from 5c912df..70994d8)
 ```
 
 * Warning! Once a user changes his displayName and photoUrl, `EasyChat.instance.updateUser()` must be called to update user information in easychat.
@@ -648,4 +643,9 @@ class _MyHomePageState extends State<MyHomePage> {
 
 
 
+<<<<<<< HEAD
 >>>>>>> ea2e335 (Squashed 'easy-extension/' changes from 5c912df..70994d8)
+=======
+
+...// aug 9
+>>>>>>> 0277439 (update on aug 9)
