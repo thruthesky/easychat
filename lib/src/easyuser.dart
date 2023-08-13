@@ -12,6 +12,8 @@ import 'package:image_picker/image_picker.dart';
 class EasyUser {
   static EasyUser? _instance;
   static EasyUser get instance => _instance ??= EasyUser._();
+
+  ///
   EasyUser._() {
     FirebaseAuth.instance.authStateChanges().listen((user) {
       if (user == null) {
@@ -23,6 +25,8 @@ class EasyUser {
       }
     });
   }
+
+  ///
 
   String get collectionName => UserModel.collectionName;
 
@@ -60,6 +64,11 @@ class EasyUser {
   /// userModel 의 getter 로 null operator 가 강제 적용된 것이다. 즉, userModel 이 null 이면 에러가 발생한다.
   /// 실시간 업데이트된 정보가 필요하면, [UserDoc] 위젯을 사용하면 된다.
   UserModel get user => userModel!;
+
+  /// 미리 한번 호출 해서, Singleton 을 초기화 해 둔다. 그래야 user 를 사용 할 때, 에러가 발생하지 않는다.
+  init() {
+    ///
+  }
 
   /// Get user
   ///

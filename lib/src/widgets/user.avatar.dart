@@ -31,6 +31,8 @@ class UserAvatar extends StatefulWidget {
     this.upload = false,
     this.delete = false,
     this.uploadStrokeWidth = 6,
+    this.shadowBlurRadius = 16.0,
+    this.onTap,
   });
 
   final UserModel user;
@@ -40,6 +42,8 @@ class UserAvatar extends StatefulWidget {
   final bool upload;
   final bool delete;
   final double uploadStrokeWidth;
+  final double shadowBlurRadius;
+  final VoidCallback? onTap;
 
   @override
   State<UserAvatar> createState() => _UserAvatarState();
@@ -52,6 +56,10 @@ class _UserAvatarState extends State<UserAvatar> {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () async {
+        if (widget.onTap != null) {
+          widget.onTap!();
+          return;
+        }
         if (widget.upload == false) return;
 
         final source = await EasyUser.instance.chooseUploadSource(context);
@@ -81,19 +89,25 @@ class _UserAvatarState extends State<UserAvatar> {
           children: [
             AdvancedAvatar(
               size: widget.size,
+
               // statusSize: 16,
               // statusColor: Colors.green,
               name: widget.user.displayName ?? widget.user.email ?? widget.user.uid,
+              style: TextStyle(
+                fontSize: widget.size / 3,
+                fontWeight: FontWeight.w500,
+                color: Colors.white,
+              ),
               image: widget.user.photoUrl == null || widget.user.photoUrl!.isEmpty
                   ? null
                   : CachedNetworkImageProvider(widget.user.photoUrl!),
-              decoration: const BoxDecoration(
+              decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 color: Colors.green,
                 boxShadow: [
                   BoxShadow(
                     color: Colors.black54,
-                    blurRadius: 16.0,
+                    blurRadius: widget.shadowBlurRadius,
                   ),
                 ],
               ),
