@@ -77,7 +77,7 @@ class _UserAvatarState extends State<UserAvatar> {
           compressQuality: 70,
         );
 
-        final oldUrl = EasyUser.instance.user.photoUrl;
+        final oldUrl = EasyUser.instance.photoUrl;
         await EasyUser.instance.update(
           photoUrl: url,
         );
