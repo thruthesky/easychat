@@ -1,7 +1,6 @@
-library easyuser;
-
-/// A Calculator.
-class Calculator {
-  /// Returns [value] plus 1.
-  int addOne(int value) => value + 1;
-}
+export 'src/easyuser.dart';
+export 'src/models/user_model.dart';
+export 'src/widgets/user.doc.dart';
+export 'src/widgets/user.ready.dart';
+export 'src/easyuser_error.dart';
+export 'src/widgets/user.avatar.dart';
