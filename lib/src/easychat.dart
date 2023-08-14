@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:easychat/easychat.dart';
+import 'package:easyuser/easyuser.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -31,8 +32,6 @@ class EasyChat {
   late final String displayNameField;
   late final String photoUrlField;
 
-  final Map<String, UserModel> _userCache = {};
-
   Function(BuildContext, ChatRoomModel)? onChatRoomFileUpload;
 
   initialize({
@@ -45,19 +44,6 @@ class EasyChat {
     this.displayNameField = displayNameField;
     this.photoUrlField = photoUrlField;
     this.onChatRoomFileUpload = onChatRoomFileUpload;
-  }
-
-  /// Get user
-  ///
-  /// It does memory cache.
-  @Deprecated('Use EasyUser.instance.get() instead')
-  Future<UserModel?> getUser(String uid) async {
-    if (_userCache.containsKey(uid)) return _userCache[uid];
-    final snapshot = await FirebaseFirestore.instance.collection(usersCollection).doc(uid).get();
-    if (!snapshot.exists) return null;
-    final user = UserModel.fromDocumentSnapshot(snapshot);
-    _userCache[uid] = user;
-    return _userCache[uid];
   }
 
   getSingleChatRoomId(String? otherUserUid) {
@@ -311,7 +297,7 @@ class EasyChat {
 
   Future<UserModel?> getOtherUserFromSingleChatRoom(ChatRoomModel room) async {
     final otherUserUid = getOtherUserUid(room.users);
-    return await getUser(otherUserUid);
+    return await EasyUser.instance.get(otherUserUid);
   }
 
   /// Open Chat Room

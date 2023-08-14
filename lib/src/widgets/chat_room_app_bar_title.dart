@@ -1,4 +1,5 @@
 import 'package:easychat/easychat.dart';
+import 'package:easyuser/easyuser.dart';
 import 'package:flutter/material.dart';
 
 class ChatRoomAppBarTitle extends StatelessWidget {
@@ -20,7 +21,7 @@ class ChatRoomAppBarTitle extends StatelessWidget {
       );
     } else {
       return FutureBuilder(
-        future: EasyChat.instance.getUser(room.otherUserUid),
+        future: EasyUser.instance.get(room.otherUserUid),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Text('Loading...');

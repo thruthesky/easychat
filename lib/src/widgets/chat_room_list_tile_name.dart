@@ -1,4 +1,5 @@
 import 'package:easychat/easychat.dart';
+import 'package:easyuser/easyuser.dart';
 import 'package:flutter/material.dart';
 
 /// ChatRoomListTileName
@@ -141,7 +142,7 @@ class ChatRoomListTileName extends StatelessWidget {
               final user = snapshot.data as UserModel;
               return _text(user.displayName);
             },
-            future: EasyChat.instance.getUser(room.otherUserUid));
+            future: EasyUser.instance.get(room.otherUserUid));
   }
 
   Text _text(String data) {

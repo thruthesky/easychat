@@ -32,15 +32,17 @@ class _TestScreenState extends State<TestUi> {
     // }
 
     /// hard code the uid for speed.
-    Test.users[0].uid = 'CccjuqddNGbcwLlWAKgolSKVon13';
-    Test.users[1].uid = 'oizgOBmEfrYJY1YqiCd8MNKTVuQ2';
-    Test.users[2].uid = 'v8GcdFB0kHaI5eyqZlfS081D3w03';
-    Test.users[3].uid = 'lbSHvOofD4btiGLVkVhE5hQAFcm2';
+    // for philgo
+    // Test.users[0].uid = 'CccjuqddNGbcwLlWAKgolSKVon13';
+    // Test.users[1].uid = 'oizgOBmEfrYJY1YqiCd8MNKTVuQ2';
+    // Test.users[2].uid = 'v8GcdFB0kHaI5eyqZlfS081D3w03';
+    // Test.users[3].uid = 'lbSHvOofD4btiGLVkVhE5hQAFcm2';
 
-    // testNoOfNewMessage();
-    // testMaximumNoOfUsers();
+    Test.users[0].uid = 'xY0P00Z5MKeYUVeXH3ZZQdOyzqt2';
+    Test.users[1].uid = 'Gjv1vA0XW5MU6eRnkTt6Si1vgXt2';
+    Test.users[2].uid = 'i2l14MKy12bNLJk7E4J9JuLvIrj2';
+    Test.users[3].uid = 'DiBndQah89TQu7EHUzu2hDH5gC62';
 
-    // await testCreateGroupChatRoom();
     await testAll();
   }
 

@@ -1,4 +1,5 @@
 import 'package:easychat/easychat.dart';
+import 'package:easyuser/easyuser.dart';
 import 'package:flutter/material.dart';
 
 class ChatRoomMembersListView extends StatefulWidget {
@@ -22,7 +23,7 @@ class _ChatRoomMembersListViewState extends State<ChatRoomMembersListView> {
       itemCount: widget.room.users.length,
       itemBuilder: (context, index) {
         return FutureBuilder(
-          future: EasyChat.instance.getUser(widget.room.users[index]),
+          future: EasyUser.instance.get(widget.room.users[index]),
           builder: (context, userSnapshot) {
             if (userSnapshot.data == null) return const SizedBox();
             final user = userSnapshot.data;

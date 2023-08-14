@@ -1,8 +1,14 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:easychat/easychat.dart';
+import 'package:easyuser/easyuser.dart';
 import 'package:firebase_ui_firestore/firebase_ui_firestore.dart';
 import 'package:flutter/material.dart';
 
+/// Display users who are not inside the room
+///
+/// TODO: Don't display users who are not in the room.
+/// TODO: Add search
+/// TODO: Display only users who open their profile.
 class InviteUserListView extends StatefulWidget {
   const InviteUserListView({
     super.key,
@@ -18,19 +24,17 @@ class InviteUserListView extends StatefulWidget {
 }
 
 class _InviteUserListViewState extends State<InviteUserListView> {
-  ChatRoomModel? _roomState;
   @override
   Widget build(BuildContext context) {
-    _roomState ??= widget.room;
     final query = FirebaseFirestore.instance
         .collection(EasyChat.instance.usersCollection)
-        .where(FieldPath.documentId, whereNotIn: _roomState!.users.take(10)); // Error message says limit is 10
+        .where(FieldPath.documentId, whereNotIn: widget.room.users.take(10)); // Error message says limit is 10
     return FirestoreListView(
       query: query,
       itemBuilder: (context, snapshot) {
         // TODO how to remove blinking
         final user = UserModel.fromDocumentSnapshot(snapshot);
-        if (_roomState!.users.contains(user.uid)) {
+        if (widget.room.users.contains(user.uid)) {
           return const SizedBox();
         } else {
           return ListTile(
@@ -42,8 +46,7 @@ class _InviteUserListViewState extends State<InviteUserListView> {
                     backgroundImage: NetworkImage(user.photoUrl),
                   ),
             onTap: () async {
-              _roomState = await EasyChat.instance.inviteUser(room: _roomState!, userUid: user.uid);
-              if (mounted) setState(() {});
+              widget.room.invite(user.uid);
               widget.onInvite?.call(user.uid);
             },
           );

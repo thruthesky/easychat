@@ -1,4 +1,5 @@
 import 'package:easychat/easychat.dart';
+import 'package:easyuser/easyuser.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -47,7 +48,9 @@ class _ChatMessageBubbleState extends State<ChatMessageBubble> {
       bubbleCrossAxisAlignment = CrossAxisAlignment.start;
       borderRadiusOfBubble = borderRadiusOfBubbleOfOtherUser;
     }
-    final user = EasyChat.instance.getUser(widget.chatMessage.senderUid);
+
+    final user = EasyUser.instance.get(widget.chatMessage.senderUid);
+
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisAlignment: bubbleMainAxisAlignment,
@@ -70,12 +73,12 @@ class _ChatMessageBubbleState extends State<ChatMessageBubble> {
               final user = snapshot.data as UserModel;
               return Row(
                 children: [
-                  user.photoUrl.isEmpty
+                  user.hasPhotoUrl == false
                       ? const SizedBox()
                       : Padding(
                           padding: const EdgeInsets.only(top: 8.0),
                           child: CircleAvatar(
-                            backgroundImage: NetworkImage(user.photoUrl),
+                            backgroundImage: NetworkImage(user.photoUrl!),
                           ),
                         ),
                 ],
@@ -99,10 +102,10 @@ class _ChatMessageBubbleState extends State<ChatMessageBubble> {
                           if (snapshot.connectionState == ConnectionState.waiting) return const Text('');
                           if (snapshot.hasData == false) return const Text('');
                           final user = snapshot.data as UserModel;
-                          return user.photoUrl.isEmpty
+                          return user.hasPhotoUrl == false
                               ? const SizedBox()
                               : Text(
-                                  user.displayName,
+                                  user.displayName ?? '',
                                   style: const TextStyle(fontWeight: FontWeight.bold),
                                 );
                         },

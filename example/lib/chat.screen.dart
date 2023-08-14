@@ -1,5 +1,6 @@
 import 'package:easychat/easychat.dart';
 import 'package:flutter/material.dart';
+import 'package:easyuser/easyuser.dart';
 
 class ChatScreen extends StatefulWidget {
   const ChatScreen({super.key, this.user});

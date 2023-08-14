@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:easychat/easychat.dart';
+import 'package:easyuser/easyuser.dart';
 import 'package:flutter/material.dart';
 
 class ProfileScreen extends StatefulWidget {
@@ -26,8 +27,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
               return const Center(child: CircularProgressIndicator());
             }
             final user = UserModel.fromDocumentSnapshot(snapshot.data as DocumentSnapshot);
-            displayName.text = user.displayName;
-            photoUrl.text = user.photoUrl;
+            displayName.text = user.displayName ?? '';
+            photoUrl.text = user.photoUrl ?? '';
 
             return Column(
               children: [

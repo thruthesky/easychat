@@ -1,5 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:easychat/easychat.dart';
+import 'package:easyuser/easyuser.dart';
 import 'package:example/chat.screen.dart';
 import 'package:firebase_ui_firestore/firebase_ui_firestore.dart';
 import 'package:flutter/material.dart';
@@ -24,12 +24,12 @@ class _UserListScrenState extends State<UserListScren> {
         itemBuilder: (context, snapshot) {
           final user = UserModel.fromDocumentSnapshot(snapshot);
           return ListTile(
-            title: Text(user.displayName),
+            title: Text(user.displayName ?? ''),
             subtitle: Text(user.uid),
-            leading: user.photoUrl.isEmpty
+            leading: user.hasPhotoUrl == false
                 ? null
                 : CircleAvatar(
-                    backgroundImage: NetworkImage(user.photoUrl),
+                    backgroundImage: NetworkImage(user.photoUrl!),
                   ),
             onTap: () => Navigator.of(context).push(
               MaterialPageRoute(
