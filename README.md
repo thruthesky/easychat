@@ -14,7 +14,9 @@
     - [Firebase Setup](#firebase-setup)
       - [Firebase Users collection](#firebase-users-collection)
       - [Firestore Security Rules](#firestore-security-rules)
+      - [Firebase Indexes](#firebase-indexes)
   - [Widgets](#widgets)
+    - [Chat Room List](#chat-room-list)
     - [Create a chat room](#create-a-chat-room)
     - [How to display a chat room](#how-to-display-a-chat-room)
     - [Additional information](#additional-information)
@@ -29,7 +31,7 @@
     - [Displaying chat rooms that has new message (unread messages)](#displaying-chat-rooms-that-has-new-message-unread-messages)
     - [1:1 Chat and Multi user chat](#11-chat-and-multi-user-chat)
   - [UI Customization](#ui-customization)
-    - [Chat room list](#chat-room-list)
+    - [Chat room list](#chat-room-list-1)
   - [Chat Room Menu](#chat-room-menu)
   - [Chat Room Settings](#chat-room-settings)
   - [Run the Security Rule Test](#run-the-security-rule-test)
@@ -119,9 +121,34 @@ EasyChat.instance.initialize(usersCollection: 'users', displayNameField: 'displa
  ... security rules here ...
 ```
 
+#### Firebase Indexes
+
+|Collection ID|Fields Indexd|
+|-------------|-------------|
+|easychat     |users lastMessage.createdAt|
+
+
+
 ## Widgets
 
 * In this chapter, the usage of the widgets is explained.
+
+
+### Chat Room List
+
+* The beginning point would be chat room list screen.
+  * On the chat room list screen, you can display chat room create icon and the login user's chat room list.
+
+* Follow the setup first.
+
+* You can display chat room list like below
+
+```dart
+final ChatRoomListViewController controller = ChatRoomListViewController();
+ChatRoomListView(
+  controller: controller,
+),
+```
 
 ### Create a chat room
 
