@@ -83,95 +83,94 @@ class _UserAvatarState extends State<UserAvatar> {
         );
         await EasyUser.instance.deleteUpload(oldUrl);
       },
-      child: Container(
-        // color: Colors.blue,
-        child: Stack(
-          children: [
-            AdvancedAvatar(
-              size: widget.size,
+      child: Stack(
+        children: [
+          AdvancedAvatar(
+            size: widget.size,
 
-              // statusSize: 16,
-              // statusColor: Colors.green,
-              name: widget.user.displayName ?? widget.user.email ?? widget.user.uid,
-              style: TextStyle(
-                fontSize: widget.size / 3,
-                fontWeight: FontWeight.w500,
-                color: Colors.white,
-              ),
-              image: widget.user.photoUrl == null || widget.user.photoUrl!.isEmpty
-                  ? null
-                  : CachedNetworkImageProvider(widget.user.photoUrl!),
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: Colors.green,
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black54,
-                    blurRadius: widget.shadowBlurRadius,
-                  ),
-                ],
-              ),
-              children: [
-                if (widget.badgeNumber != null)
-                  AlignCircular(
-                    alignment: Alignment.topRight,
-                    child: Container(
-                      width: 20,
-                      height: 20,
-                      alignment: Alignment.center,
-                      decoration: BoxDecoration(
-                        border: Border.all(
-                          color: Colors.white,
-                          width: 0.5,
-                        ),
-                        color: Colors.red,
-                        shape: BoxShape.circle,
+            // statusSize: 16,
+            // statusColor: Colors.green,
+            name: widget.user.displayName.isNotEmpty
+                ? widget.user.displayName
+                : widget.user.uid.substring(0, 4),
+            style: TextStyle(
+              fontSize: widget.size / 3,
+              fontWeight: FontWeight.w500,
+              color: Colors.white,
+            ),
+            image: widget.user.photoUrl.isEmpty
+                ? null
+                : CachedNetworkImageProvider(widget.user.photoUrl),
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: Colors.green,
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black54,
+                  blurRadius: widget.shadowBlurRadius,
+                ),
+              ],
+            ),
+            children: [
+              if (widget.badgeNumber != null)
+                AlignCircular(
+                  alignment: Alignment.topRight,
+                  child: Container(
+                    width: 20,
+                    height: 20,
+                    alignment: Alignment.center,
+                    decoration: BoxDecoration(
+                      border: Border.all(
+                        color: Colors.white,
+                        width: 0.5,
                       ),
-                      child: Text(
-                        widget.badgeNumber.toString(),
-                        style: const TextStyle(
-                          fontSize: 10,
-                          fontWeight: FontWeight.w500,
-                          color: Colors.white,
-                        ),
+                      color: Colors.red,
+                      shape: BoxShape.circle,
+                    ),
+                    child: Text(
+                      widget.badgeNumber.toString(),
+                      style: const TextStyle(
+                        fontSize: 10,
+                        fontWeight: FontWeight.w500,
+                        color: Colors.white,
                       ),
                     ),
                   ),
-              ],
-            ),
-            uploadProgressIndicator(),
-            if (widget.upload)
-              Positioned(
-                right: 0,
-                bottom: 0,
-                child: Icon(
-                  Icons.camera_alt,
-                  color: Colors.grey.shade800,
-                  size: 32,
                 ),
+            ],
+          ),
+          uploadProgressIndicator(),
+          if (widget.upload)
+            Positioned(
+              right: 0,
+              bottom: 0,
+              child: Icon(
+                Icons.camera_alt,
+                color: Colors.grey.shade800,
+                size: 32,
               ),
-            if (widget.delete && widget.user.photoUrl != null && widget.user.photoUrl!.isNotEmpty)
-              Positioned(
-                top: 0,
-                left: 0,
-                child: IconButton(
-                    onPressed: () async {
-                      await EasyUser.instance.deleteUpload(EasyUser.instance.user.photoUrl);
-                      await EasyUser.instance.update(
-                        field: 'photoUrl',
-                        value: FieldValue.delete(),
-                      );
-                    },
-                    padding: EdgeInsets.zero,
-                    visualDensity: VisualDensity.compact,
-                    icon: Icon(
-                      Icons.remove_circle,
-                      color: Colors.grey.shade600,
-                      size: 30,
-                    )),
-              ),
-          ],
-        ),
+            ),
+          if (widget.delete && widget.user.photoUrl.isNotEmpty)
+            Positioned(
+              top: 0,
+              left: 0,
+              child: IconButton(
+                  onPressed: () async {
+                    await EasyUser.instance.deleteUpload(EasyUser.instance.user.photoUrl);
+                    await EasyUser.instance.update(
+                      field: 'photoUrl',
+                      value: FieldValue.delete(),
+                    );
+                  },
+                  padding: EdgeInsets.zero,
+                  visualDensity: VisualDensity.compact,
+                  icon: Icon(
+                    Icons.remove_circle,
+                    color: Colors.grey.shade600,
+                    size: 30,
+                  )),
+            ),
+        ],
       ),
     );
   }

@@ -1,6 +1,6 @@
 name: easyuser
 description: Easyuser is a package that can be used with other easy packages.
-version: 0.0.2
+version: 0.0.3
 homepage: https://github.com/thruthesky/easyuser
 
 environment:
