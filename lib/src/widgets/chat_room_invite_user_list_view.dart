@@ -27,7 +27,7 @@ class _InviteUserListViewState extends State<InviteUserListView> {
   @override
   Widget build(BuildContext context) {
     final query = FirebaseFirestore.instance
-        .collection(EasyChat.instance.usersCollection)
+        .collection('users')
         .where(FieldPath.documentId, whereNotIn: widget.room.users.take(10)); // Error message says limit is 10
     return FirestoreListView(
       query: query,

@@ -28,22 +28,25 @@ class EasyChat {
   DocumentReference get myDoc => FirebaseFirestore.instance.collection('users').doc(FirebaseAuth.instance.currentUser!.uid);
   DocumentReference roomDoc(String roomId) => chatCol.doc(roomId);
 
-  late final String usersCollection;
-  late final String displayNameField;
-  late final String photoUrlField;
-
   Function(BuildContext, ChatRoomModel)? onChatRoomFileUpload;
 
-  initialize({
-    required String usersCollection,
-    required String displayNameField,
-    required String photoUrlField,
+  /// TODO: Support official localization.
+  late final Map<String, String> texts;
+
+  init({
     Function(BuildContext, ChatRoomModel)? onChatRoomFileUpload,
+    Map<String, String>? texts,
   }) {
-    this.usersCollection = usersCollection;
-    this.displayNameField = displayNameField;
-    this.photoUrlField = photoUrlField;
     this.onChatRoomFileUpload = onChatRoomFileUpload;
+    if (texts == null) {
+      this.texts = {};
+    } else {
+      this.texts = texts;
+    }
+  }
+
+  t(String code) {
+    return texts[code] ?? code;
   }
 
   getSingleChatRoomId(String? otherUserUid) {

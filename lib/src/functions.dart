@@ -1,3 +1,5 @@
+import 'package:easychat/easychat.dart';
+
 /// Replaces characters in [input] that are illegal/unsafe for filenames.
 ///
 /// You can also use a custom [replacement] if needed.
@@ -62,4 +64,8 @@ String sanitizeFilename(String input, {String replacement = ''}) {
       .replaceFirst(RegExp(r'[\. ]+$'), replacement);
 
   return result.length > 255 ? result.substring(0, 255) : result;
+}
+
+t(String code) {
+  return EasyChat.instance.t(code);
 }

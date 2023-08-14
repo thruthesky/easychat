@@ -18,7 +18,7 @@ class _ChatRoomCreateState extends State<ChatRoomCreate> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: const Text('Create Chat Room'),
+      title: Text(t('Create Chat Room')),
       content: Column(
         mainAxisSize: MainAxisSize.min,
         children: [

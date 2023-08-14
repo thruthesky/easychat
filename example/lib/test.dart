@@ -25,11 +25,7 @@ class _MyAppState extends State<MyApp> {
   void initState() {
     super.initState();
 
-    EasyChat.instance.initialize(
-      usersCollection: 'users',
-      displayNameField: 'displayName',
-      photoUrlField: 'photoUrl',
-    );
+    EasyChat.instance.init();
   }
 
   @override
