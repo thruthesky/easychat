@@ -50,6 +50,7 @@ class EasyChat {
   /// Get user
   ///
   /// It does memory cache.
+  @Deprecated('Use EasyUser.instance.get() instead')
   Future<UserModel?> getUser(String uid) async {
     if (_userCache.containsKey(uid)) return _userCache[uid];
     final snapshot = await FirebaseFirestore.instance.collection(usersCollection).doc(uid).get();
