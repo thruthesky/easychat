@@ -15,7 +15,8 @@ dependencies:
   cupertino_icons: ^1.0.2
   easychat:
     path: ..
-  easyuser: ^0.0.3
+  easyuser:
+    path: ../easyuser
   firebase_core: ^2.14.0
   cloud_firestore: ^4.8.2
   firebase_ui_firestore: ^1.5.4
