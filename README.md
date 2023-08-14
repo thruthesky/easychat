@@ -294,14 +294,19 @@ class _ChatRoomListreenState extends State<ChatRoomListSreen> {
               showDialog(
                 context: context,
                 builder: (_) => ChatRoomCreate(
-                  success: () => Navigator.of(context).pop(),
+                  success: (room) {
+                    Navigator.of(context).pop();
+                    if (context.mounted) {
+                      controller.showChatRoom(context: context, room: room);
+                    }
+                  },
                   cancel: () => Navigator.of(context).pop(),
                   error: () => const ScaffoldMessenger(child: Text('Error creating chat room')),
                 ),
               );
             },
             icon: const Icon(Icons.add),
-          )
+          ),
         ],
       ),
 ```
