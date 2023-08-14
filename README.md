@@ -1,6 +1,6 @@
 # EasyChat
 
-* This package helps the flutter developers to rapidly build chat app.
+* This package helps flutter developers to rapidly build chat app.
 
 - [EasyChat](#easychat)
   - [TODO](#todo)
