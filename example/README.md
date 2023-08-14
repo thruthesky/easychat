@@ -1,17 +1,45 @@
-# example
+# Example App of EasyChat
 
-A new Flutter project.
+* Example App for easy understading of how you can use EasyChat.
 
-## Getting Started
 
-This project is a starting point for a Flutter application.
 
-A few resources to get you started if this is your first Flutter project:
+## Flowchart
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
-# easychat_example
+### Chat room life cyle flowchart
+
+
+```mermaid
+flowchart TD
+roomList(Chat Room List Screen)
+roomList-->createRoomPopup[/Chat Room Create Popup/]
+roomList-->chatRoom
+createRoomPopup-->createRoomPopupCreate{Create or No?}
+createRoomPopupCreate--No-->roomList
+createRoomPopupCreate--Yes-->chatRoom(Chat Room)
+chatRoom-->inviteUser(Invite User)
+chatRoom-->beginChat
+chatRoom-->leave-->roomList
+inviteUser-->inviteUserSearch(Search User)-->invite{Invite or No?}
+invite--Yes-->updateDatabase-->chatRoom
+invite--No-->chatRoom
+beginChat-->uploadPhoto
+chatRoom-->master{If you are a master?}-->chatRoomSettings(TODO: Add more settings)
+```
+
+
+
+
+
+### Chat message send flowchart
+
+```mermaid
+flowchart TD
+inputBox-->sendMessage
+sendMessage-->updateRoom
+sendMessage-->cloudFunctions>Cloud Functions]-->notification(Send Push Notification)
+```
+
+### Photo send flowchat
+
