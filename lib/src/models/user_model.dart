@@ -6,11 +6,11 @@ class UserModel {
   final String uid;
 
   /// 만약, dsiplayName 이 없으면, uid 의 앞 두글자를 대문자로 표시.
-  final String? displayName;
-  final String? name;
-  final String? photoUrl;
-  final String? phoneNumber;
-  final String? email;
+  final String displayName;
+  final String name;
+  final String photoUrl;
+  final String phoneNumber;
+  final String email;
 
   /// DB 에 저장되는 값. 그래야 검색이 가능.
   final bool hasPhotoUrl;
@@ -23,12 +23,12 @@ class UserModel {
 
   UserModel({
     required this.uid,
-    this.displayName,
-    this.name,
-    this.photoUrl,
+    this.displayName = '',
+    this.name = '',
+    this.photoUrl = '',
     this.hasPhotoUrl = false,
-    this.phoneNumber,
-    this.email,
+    this.phoneNumber = '',
+    this.email = '',
     this.createdAt,
   }) : createdAtDateTime = createdAt?.toDate();
 
@@ -56,12 +56,12 @@ class UserModel {
   Map<String, dynamic> toMap() {
     return {
       'uid': uid,
-      if (displayName != null) 'displayName': displayName,
-      if (name != null) 'name': name,
-      if (photoUrl != null) 'photoUrl': photoUrl,
+      'displayName': displayName,
+      'name': name,
+      'photoUrl': photoUrl,
       'hasPhotoUrl': hasPhotoUrl,
-      if (phoneNumber != null) 'phoneNumber': phoneNumber,
-      if (email != null) 'email': email,
+      'phoneNumber': phoneNumber,
+      'email': email,
       'createdAt': createdAt ?? FieldValue.serverTimestamp(),
     };
   }

@@ -111,9 +111,9 @@ class EasyUser {
 
     final model = UserModel(
       uid: u.uid,
-      email: u.email,
-      displayName: u.displayName,
-      photoUrl: u.photoURL,
+      email: u.email ?? '',
+      displayName: u.displayName ?? '',
+      photoUrl: u.photoURL ?? '',
       createdAt: null,
     );
     userModel = await model.create();
