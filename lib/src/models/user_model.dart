@@ -44,11 +44,11 @@ class UserModel {
     return UserModel(
       uid: id,
       displayName: displayName == '' ? id.toUpperCase().substring(0, 2) : displayName,
-      name: map['name'],
+      name: map['name'] ?? '',
       photoUrl: (map['photoUrl'] ?? '') as String,
       hasPhotoUrl: map['hasPhotoUrl'] ?? false,
-      phoneNumber: map['phoneNumber'],
-      email: map['email'],
+      phoneNumber: map['phoneNumber'] ?? '',
+      email: map['email'] ?? '',
       createdAt: map['createdAt'],
     );
   }
