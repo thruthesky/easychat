@@ -14,6 +14,7 @@ class ChatRoomCreate extends StatefulWidget {
 
 class _ChatRoomCreateState extends State<ChatRoomCreate> {
   final name = TextEditingController();
+  bool isOpen = false;
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
@@ -27,6 +28,13 @@ class _ChatRoomCreateState extends State<ChatRoomCreate> {
               labelText: 'Chat Room Name',
             ),
           ),
+          CheckboxListTile.adaptive(
+            title: const Text('Open Chat'),
+            value: isOpen,
+            onChanged: (re) => setState(() {
+              isOpen = re!;
+            }),
+          ),
         ],
       ),
       actions: [
@@ -38,6 +46,7 @@ class _ChatRoomCreateState extends State<ChatRoomCreate> {
           onPressed: () async {
             final createdChatRoom = await EasyChat.instance.createChatRoom(
               roomName: name.text,
+              isOpen: isOpen,
             );
             widget.success(createdChatRoom);
           },
