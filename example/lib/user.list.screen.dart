@@ -24,12 +24,12 @@ class _UserListScrenState extends State<UserListScren> {
         itemBuilder: (context, snapshot) {
           final user = UserModel.fromDocumentSnapshot(snapshot);
           return ListTile(
-            title: Text(user.displayName ?? ''),
+            title: Text(user.displayName),
             subtitle: Text(user.uid),
             leading: user.hasPhotoUrl == false
                 ? null
                 : CircleAvatar(
-                    backgroundImage: NetworkImage(user.photoUrl!),
+                    backgroundImage: NetworkImage(user.photoUrl),
                   ),
             onTap: () => Navigator.of(context).push(
               MaterialPageRoute(

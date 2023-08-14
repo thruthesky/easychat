@@ -27,8 +27,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
               return const Center(child: CircularProgressIndicator());
             }
             final user = UserModel.fromDocumentSnapshot(snapshot.data as DocumentSnapshot);
-            displayName.text = user.displayName ?? '';
-            photoUrl.text = user.photoUrl ?? '';
+            displayName.text = user.displayName;
+            photoUrl.text = user.photoUrl;
 
             return Column(
               children: [

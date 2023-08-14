@@ -31,7 +31,7 @@ class EasyChat {
   Function(BuildContext, ChatRoomModel)? onChatRoomFileUpload;
 
   /// TODO: Support official localization.
-  late final Map<String, String> texts;
+  Map<String, String> texts = {};
 
   init({
     Function(BuildContext, ChatRoomModel)? onChatRoomFileUpload,
